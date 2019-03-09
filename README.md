@@ -18,13 +18,13 @@ based on it.
 | [android] | TO BE RELEASED | Android |
 | [ios] | TO BE RELEASED | iOS |
 | [web/h5] | TO BE RELEASED | Web/Html5 |
-| [wechat] | TO BE RELEASED | Wechat and mini program |
+| [wechat] | TO BE RELEASED | Wechat mini program |
 
 [server]: https://github.com/xiaper/server
 [android]: https://github.com/xiaper/android
 [ios]: https://github.com/xiaper/ios
 [web/h5]: https://github.com/xiaper/web
-[wechat]: https://github.com/xiaper/wechat
+[miniprogram]: https://github.com/xiaper/miniprogram
 
 ## Documentation
 
