@@ -1,0 +1,20 @@
+{
+  "name": "萝卜丝·Web客服接口文档",
+  "version": "1.4.7",
+  "description": "Web客服接口文档描述",
+  "title": "萝卜丝·Web客服接口文档",
+  "url" : "https://api.bytedesk.com",
+  "sampleUrl": "http://127.0.0.1:8000",
+  "header": {
+    "title": "萝卜丝 · Web客服",
+    "filename": "header.md"
+  },
+  "footer": {
+    "title": "www.bytedesk.com",
+    "filename": "footer.md"
+  },
+  "template": {
+  	"withCompare": true,
+  	"withGenerator": true
+  }
+}

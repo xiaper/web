@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="renderer" content="webkit">
+  <meta name="keywords" content="ByteDesk.com 微客服 在线客服系统 微信客服系统 智能客服系统 即时通讯云 企业协作系统 工单系统 App android ios 苹果 安卓 微信 微信公众平台 微服务 android iOS 微客服 App客服  App在线客服 App 在线咨询 移动开发者服务平台 微客服  在线客服  微博 新浪微博 微信 微语 聊天 移动聊天 免费 发信息 发图片 语音 weixin 离线消息 微博 私信 流量" />
+  <meta name="description" content="ByteDesk.com 微客服 卓越的在线客服系统 微信客服系统 智能客服系统 即时通讯云 企业协作系统 工单系统 android ios 苹果 安卓 微信 微信公众平台 微服务 微客服 App在线客服 App在线咨询 android iOS 安卓 移动开发者服务平台 一款跨平台的在线客服工具。支持多个微博、绑定多个账号。通过获取微博用户关系链、粉丝、好友，挖掘潜在客户。" />
+  <meta name="author" content="ByteDesk.com">
+  <link rel="icon" href="/favicon.ico">
+
+  <!-- this is header-css -->
+  <!-- <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet"> -->
+  <link href="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    
+  <!-- layui -->
+  <!-- <link href="https://cdn.bytedesk.com/js/vendor/layui/src/css/layui.css" rel="stylesheet"/>
+  <link href="https://cdn.bytedesk.com/css/layim.css" rel="stylesheet"/> -->
+  <link href="/assets/js/layui/src/css/layui.css" rel="stylesheet"/>
+  <link href="./css/layim.css" rel="stylesheet"/>
+
+  <!--iconfont.cn-->
+  <link rel="stylesheet" href="//at.alicdn.com/t/font_761687_xivxue5rikg.css" />
+  <link rel="stylesheet" href="./css/im.css" />
+  <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+  <!--[if lt IE 9]>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html5shiv/r29/html5.min.js"></script>
+  <![endif]-->
+  <!--[if lte IE 9]>
+  <script type='text/javascript' src='//cdnjs.cloudflare.com/ajax/libs/jquery-ajaxtransport-xdomainrequest/1.0.3/jquery.xdomainrequest.min.js'></script>
+  <![endif]-->
+
+  <title>萝卜丝·IM</title>
+
+</head>
+
+<body>
+
+  <div id="bytedesk-im">
+    
+  </div>
+
+  <!-- 登录 -->
+  <div id="byteDesk-login" style="display: none;">
+    <div style="margin: auto; margin-top: 10px; height: 100%;">
+        <form class="layui-form" id="login-form" action="">
+          <!-- 测试提示：可统一使用 'vip' -->
+          <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >企业号</label>
+            <div class="layui-input-block">
+            <input id="subdomain" type="text" name="subdomain" required value="vip" style="width: 240px" lay-verify="required" placeholder="请输入企业号" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <!-- 测试用户名：test1、test2、...., test15 -->
+          <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">用户名</label>
+            <div class="layui-input-block">
+            <input id="username" type="text" name="username" required value="test1" style="width: 240px" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <!-- 测试提示：可统一使用 '123456' -->
+          <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">密码</label>
+            <div class="layui-input-block">
+            <input id="password" type="text" name="password" required value="123456" style="width: 240px" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+              <button class="layui-btn" lay-submit lay-filter="login">登录</button>
+              <!-- <button class="layui-btn layui-btn-primary" id="registerBtn">注册</button> -->
+            </div>
+          </div>
+        </form>
+    </div>
+  </div>
+
+  <!-- 注册 -->
+  <div id="byteDesk-register" style="display: none;">
+
+    <div style="margin: auto; margin-top: 10px; height: 100%;">
+
+        <form class="layui-form" id="login-form" action="">
+          <!-- 测试提示：可统一使用 'vip' -->
+          <div class="layui-form-item center" >
+            <label class="layui-form-label" style="width: 100px" >企业号</label>
+            <div class="layui-input-block">
+            <input id="subdomain" type="text" name="subdomain" required value="vip" style="width: 240px" lay-verify="required" placeholder="请输入企业号" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <!-- 测试用户名：test1、test2、...., test15 -->
+          <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">用户名</label>
+            <div class="layui-input-block">
+            <input id="username" type="text" name="username" required value="test1" style="width: 240px" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">昵称</label>
+            <div class="layui-input-block">
+            <input id="username" type="text" name="username" required value="test1" style="width: 240px" lay-verify="required" placeholder="请输入用户名" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <!-- 测试提示：可统一使用 '123456' -->
+          <div class="layui-form-item">
+            <label class="layui-form-label" style="width: 100px">密码</label>
+            <div class="layui-input-block">
+            <input id="password" type="text" name="password" required value="123456" style="width: 240px" lay-verify="required" placeholder="请输入密码" autocomplete="off" class="layui-input">
+            </div>
+          </div>
+          <div class="layui-form-item">
+            <div class="layui-input-block">
+            <button class="layui-btn" lay-submit lay-filter="register">注册</button>
+            <!-- <button type="reset" class="layui-btn layui-btn-primary" id="closeBtn" >重置</button> -->
+            </div>
+          </div>
+        </form>
+
+    </div>
+  </div>
+
+  <!-- 社交关系 -->
+  <div id="byteDesk-social" style="display: none;">
+    <div class="layui-tab layui-tab-brief" lay-filter="social">
+      <ul class="layui-tab-title">
+        <li class="layui-this">测试用户</li>
+        <li>群组</li>
+        <li>关注</li>
+        <li>粉丝</li>
+        <li>好友</li>
+        <li>黑名单</li>
+      </ul>
+      <div class="layui-tab-content">
+        <div class="layui-tab-item layui-show" id="byteDesk-test-users"></div>
+        <div class="layui-tab-item" id="byteDesk-groups">
+          <!-- <button class="layui-btn">创建群组</button> -->
+        </div>
+        <div class="layui-tab-item" id="byteDesk-follows"></div>
+        <div class="layui-tab-item" id="byteDesk-fans"></div>
+        <div class="layui-tab-item" id="byteDesk-friends"></div>
+        <div class="layui-tab-item" id="byteDesk-blocks"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.min.js"></script> -->
+  <script src="https://cdn.bootcss.com/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+
+  <!-- layui -->
+  <!-- <script type="text/javascript" src="https://cdn.bytedesk.com/js/vendor/layui/src/layui.js"></script> -->
+  <script type="text/javascript" src="/assets/js/layui/src/layui.js"></script>
+
+  <!-- 长连接 -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js"></script>
+  <script type="text/javascript" src="/assets/js/stomp/1.2/stomp.min.js"></script>
+
+  <script type="text/javascript" src="./js/constants.js"></script>
+  <script type="text/javascript" src="./js/data.js"></script>
+  <script type="text/javascript" src="./js/utils.js"></script>
+  <script type="text/javascript" src="./js/httpapi.js"></script>
+  <script type="text/javascript" src="./js/stompapi.js"></script>
+  <script type="text/javascript" src="./js/layim.js"></script>
+
+  <script type="text/javascript" src="./js/im.js"></script>
+
+</body>
+
+</html>
