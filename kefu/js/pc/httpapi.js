@@ -512,7 +512,7 @@ var httpapi = {
    * @apiUse ResponseResultSuccess
    */
   requestThread: function () {
-    console.log('start request thread')
+    console.log('start request thread');
     $.ajax({
       url: data.HTTP_HOST +
       "/api/thread/request",
@@ -585,6 +585,11 @@ var httpapi = {
           utils.switchLeaveMessage();
         } else if (response.status_code === 205) {
           // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+        } else if (response.status_code === 206) {
+          // 返回机器人初始欢迎语 + 欢迎问题列表
           utils.pushToMessageArray(message);
           // 1. 保存thread
           data.thread = message.thread;
@@ -1509,6 +1514,116 @@ var httpapi = {
         } else if (response.status_code === -1) {
           // access token invalid
           httpapi.login();
+        } else if (response.status_code === -2) {
+          // sid 或 wid 错误
+          alert("siteId或者工作组id错误");
+        } else if (response.status_code === -3) {
+          alert("您已经被禁言");
+        }
+        //
+        utils.scrollToBottom();
+      },
+      error: function(error) {
+        console.log("choose workGroup error:", error);
+      }
+    });
+  },
+  /**
+   * @api {get} /api/thread/choose/workGroup/liuxue 选择留学工作组
+   * @apiName chooseWorkGroupLiuXue
+   * @apiGroup User
+   * @apiVersion 1.4.7
+   * @apiPermission afterLogin
+   * 
+   * @apiParam {String} access_token 访问令牌
+   * @apiParam {String} wId 工作组唯一wid
+   * @apiParam {String} nickname 当前工作组昵称
+   * @apiParam {String} client 固定写死为 'web'
+   * 
+   * @apiDescription 选择工作组
+   *
+   * @apiUse ResponseResultSuccess
+   */
+  chooseWorkGroupLiuXue: function (wId, workGroupNickname) {
+    console.log("choose workgroup liuxue:", wId, workGroupNickname);
+    // 只允许同时进行一个会话
+    if (data.isThreadStarted) {
+      alert("不能重复请求");
+      return;
+    }
+    $.ajax({
+      url: data.HTTP_HOST +
+      "/api/thread/choose/workGroup/liuxue?access_token=" +
+      data.passport.token.access_token,
+      contentType: "application/json; charset=utf-8",
+      type: "get",
+      data: {
+        wId: wId,
+        nickname: workGroupNickname,
+        client: data.client
+      },
+      success:function(response){
+        console.log("choose workGroup Liuxue success:", response.data);
+        var message = response.data;
+        if (response.status_code === 200) {
+          //
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+          // 2. 订阅会话消息
+          bd_kfe_stompapi.subscribeTopic(data.threadTopic());
+          // 3. 加载聊天记录
+          bd_kfe_httpapi.loadMoreMessages();
+          // 4. 头像、标题、描述
+          if (data.thread.appointed) {
+            data.title = data.thread.agent.nickname;
+          } else {
+            data.title = data.thread.workGroup.nickname;
+          }
+          // 防止重复点击
+          data.isThreadStarted = true;
+        } else if (response.status_code === 201) {
+          // message.content = '继续之前会话';
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+          // 2. 订阅会话消息
+          bd_kfe_stompapi.subscribeTopic(data.threadTopic());
+          // 3. 加载聊天记录
+          bd_kfe_httpapi.loadMoreMessages();
+          // 4. 头像、标题、描述
+          if (data.thread.appointed) {
+            data.title = data.thread.agent.nickname;
+          } else {
+            data.title = data.thread.workGroup.nickname;
+          }
+          // 防止重复点击
+          data.isThreadStarted = true;
+        } else if (response.status_code === 202) {
+          // 排队
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+          // 防止重复点击
+          data.isThreadStarted = true;
+        } else if (response.status_code === 203) {
+          // 当前非工作时间，请自助查询或留言
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+        } else if (response.status_code === 204) {
+          // 当前无客服在线，请自助查询或留言
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+        } else if (response.status_code === 205) {
+          // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+          utils.pushToMessageArray(message);
+          // 1. 保存thread
+          data.thread = message.thread;
+        } else if (response.status_code === -1) {
+          // access token invalid
+          bd_kfe_httpapi.login();
         } else if (response.status_code === -2) {
           // sid 或 wid 错误
           alert("siteId或者工作组id错误");

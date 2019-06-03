@@ -71,7 +71,7 @@
 
     //
     var elementCss = document.createElement('link');
-    elementCss.setAttribute('href','//cdnjs.cloudflare.com/ajax/libs/element-ui/2.4.0/theme-chalk/index.css');
+    elementCss.setAttribute('href','//unpkg.com/element-ui@2.4.0/lib/theme-chalk/index.css');
     elementCss.setAttribute('rel','stylesheet');
     elementCss.setAttribute('type','text/css');
     document.getElementsByTagName("head")[0].appendChild(elementCss);
@@ -85,14 +85,15 @@
 
     // 第三方库
     var vendorJs = [
-        '//cdnjs.cloudflare.com/ajax/libs/UAParser.js/0.7.18/ua-parser.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.0/fingerprint2.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.1.4/sockjs.min.js',
+        '//cdn.bootcss.com/jquery/1.9.1/jquery.min.js',
+        '//cdn.bytedesk.com/js/vendor/uaparser/0.7.18/ua-parser.min.js',
+        '//cdn.bytedesk.com/js/vendor/fingerprintjs2/1.8.0/fingerprint2.min.js',
+        '//cdn.bytedesk.com/js/vendor/moment/2.22.1/moment.min.js',
+        '//cdn.bytedesk.com/js/vendor/sockjs/1.1.4/sockjs.min.js',
         '//cdn.bytedesk.com/js/vendor/stomp/1.2/stomp.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js',
-        '//cdnjs.cloudflare.com/ajax/libs/element-ui/2.4.0/index.js',
-        '//cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js',
+        '//cdn.bytedesk.com/js/vendor/vue/2.5.16/vue.min.js',
+        '//cdn.bytedesk.com/js/vendor/elementui/2.4.0/index.js',
+        // '//cdnjs.cloudflare.com/ajax/libs/axios/0.18.0/axios.min.js',
         // 自定义的js
         './js/float/medium.js',
         './js/float/html.js',

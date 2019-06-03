@@ -699,7 +699,8 @@
             },
             computed: {
                 showEmoji () {
-                    return !this.disabled && this.show_emoji
+                    // return !this.disabled && this.show_emoji
+                    return this.show_emoji
                 },
                 disabled () {
                     return this.thread.tid === ''
@@ -851,9 +852,21 @@
                     })
                 },
                 pushToMessageArray(message) {
-                    let contains = this.messages.some(msg => {
-                        return msg.id === message.id
-                    })
+                    if (message.status === 'sending') {
+                        this.messages.push(message);
+                        return
+                    }
+                    //
+                    let contains = false
+                    for (let i = this.messages.length - 1; i >= 0; i--) {
+                        const msg = this.messages[i];
+                        // 根据localId替换本地消息，也即更新本地消息状态
+                        if (msg.localId === message.localId) {
+                            this.messages.splice(i, 1)
+                            this.messages.push(message)
+                            contains = true
+                        }
+                    }
                     if (!contains) {
                         this.messages.push(message)
                     }
@@ -1685,16 +1698,8 @@
                         console.log("choose workGroup error:",error);
                     });
                 },
-                /**
-                 *
-                 */
-                pushMessage(messageObject) {
-                    let contains = app.messages.some(message  =>  {
-                        return message.id === messageObject.id
-                    })
-                    if (!contains) {
-                        app.pushToMessageArray(messageObject);
-                    }
+                currentTimestamp () {
+                    return moment().format('YYYY-MM-DD HH:mm:ss')
                 },
                 guid() {
                     function s4 () {
@@ -1716,6 +1721,22 @@
                 sendMessageSync(type, content) {
                     //
                     let localId = this.guid();
+                    let message = {
+                        id: 9999999999999,
+                        type: type,
+                        content: content,
+                        imageUrl: content,
+                        createdAt: this.currentTimestamp(),
+                        localId: localId,
+                        status: 'sending',
+                        user: {
+                            uid: this.uid,
+                            username: this.username,
+                            nickname: this.username,
+                            avatar: 'https://chainsnow.oss-cn-shenzhen.aliyuncs.com/avatars/chrome_default_avatar.png'
+                        }
+                    }
+                    this.pushToMessageArray(message);
                     axios.post(this.HTTP_HOST + '/api/messages/send?access_token=' + this.passport.token.access_token, {
                         tid: this.thread.tid,
                         type: type,
@@ -1812,7 +1833,7 @@
                             && messageObject.type !== 'notification_connect'
                             && messageObject.type !== 'notification_disconnect') {
                             app.isRobot = false;
-                            app.pushMessage(messageObject);
+                            app.pushToMessageArray(messageObject);
                             app.scrollToBottom()
                         } else {
                             // TODO: 监听客服端输入状态

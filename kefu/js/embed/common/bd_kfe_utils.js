@@ -185,18 +185,35 @@ var bd_kfe_utils = {
   },
   //
   pushToMessageArray: function(message) {
-    // var contains = bd_kfe_data.messages.some(msg => {
-    //   return msg.id === message.id;
-    // });
-    var contains = false;
-    for (var i = 0; i < bd_kfe_data.messages.length; i++) {
-      var msg = bd_kfe_data.messages[i];
-      if (msg.id === message.id) {
-        contains = true;
+    // var contains = false;
+    // for (var i = 0; i < bd_kfe_data.messages.length; i++) {
+    //   var msg = bd_kfe_data.messages[i];
+    //   if (msg.id === message.id) {
+    //     contains = true;
+    //   }
+    // }
+    // if (!contains) {
+    //   bd_kfe_data.messages.push(message);
+    // } else {
+    //   return;
+    // }
+    if (message.status === 'sending') {
+      bd_kfe_data.messages.push(message);
+      return
+    }
+    //
+    var contains = false
+    for (var i = bd_kfe_data.messages.length - 1; i >= 0; i--) {
+      const msg = bd_kfe_data.messages[i];
+      // 根据localId替换本地消息，也即更新本地消息状态
+      if (msg.mid === message.mid) {
+        bd_kfe_data.messages.splice(i, 1)
+        bd_kfe_data.messages.push(message)
+        contains = true
       }
     }
     if (!contains) {
-      bd_kfe_data.messages.push(message);
+      bd_kfe_data.messages.push(message)
     } else {
       return;
     }
@@ -255,12 +272,14 @@ var bd_kfe_utils = {
           "</div>";
       } else if (bd_kfe_utils.is_type_robot(message)) {
         console.log("robot:", message.content);
-        // var question = "";
-        // for (var i = 0; i < message.answers.length; i++) {
-        //   var answer = message.answers[i];
-        //   question += "<span style='color:#007bff; cursor: pointer;' onclick='bd_kfe_httpapi.getAnswer(" + answer.aid + ")'>" + answer.question + "</span>";
-        // }
-        content += "<div class='byteDesk-text'>" + message.content + "</div>";
+        //
+        var question = "";
+        for (var j = 0; j < message.answers.length; j++) {
+          var answer = message.answers[j];
+          question += "<br/><span style='color:#007bff; cursor: pointer;' onclick='httpapi.getAnswer(" + answer.aid + ")'>" + answer.question + "</span>";
+        }
+        //
+        content += "<div class='text'>" + message.content  + question+ "</div>";
       } else if (bd_kfe_utils.is_type_questionnaire(message)) {
         var questionnaire = "";
         for (
@@ -314,7 +333,7 @@ var bd_kfe_utils = {
           var item = message.workGroups[i];
           workGroup +=
             "<br/><span style='color: #007bff; cursor: pointer;' onclick='bd_kfe_httpapi.chooseWorkGroup(" +
-            item.wid +
+            item.wid + ",\"" + item.nickname + "\"" +
             ")'>" +
             item.nickname +
             "</span>";
@@ -345,10 +364,6 @@ var bd_kfe_utils = {
     var r = window.location.search.substr(1).match(reg); //匹配目标参数
     if (r != null) return decodeURIComponent(r[2]);
     return null; //返回参数值
-  },
-  //
-  pushMessage: function(message) {
-    bd_kfe_utils.pushToMessageArray(message)
   },
   //
   pushAnswers: function(answers) {
@@ -475,6 +490,9 @@ var bd_kfe_utils = {
       s4() +
       s4()
     );
+  },
+  currentTimestamp () {
+    return moment().format('YYYY-MM-DD HH:mm:ss')
   },
   //
   isMobile: function() { 

@@ -20,6 +20,8 @@
 
   <div>
     <a href="/kefu/mobile.html?uid=201808221551193&wid=201807171659201&type=workGroup&aid=&ph=ph" target="_blank">兼容移动端</a>
+    <a href="/kefu/pc.html?uid=201808221551193&wid=201807171659201&type=workGroup&aid=&ph=ph" target="_blank">PC端大窗口</a>
+    <a href="/kefu/float.html" target="_blank">PC端小窗口</a>
   </div>
 
   <!--萝卜丝·智能客服代码 开始 -->
@@ -27,6 +29,7 @@
   <script type="text/javascript">
     window.adminUid = "201808221551193";
     window.workGroupWid = "201807171659201";
+    // window.workGroupWid = "201808101819291";
     window.subDomain = "vip";
     window.type = "workGroup";
     window.agentUid = "201808221551193";
@@ -41,6 +44,40 @@
     })();
   </script>
   <!--./萝卜丝·智能客服代码 结束 -->
+
+  <!-- begin of rasa -->
+  <!-- python -m rasa_core.run -d models/dialogue -u models/current/nlu --port 5002 --credentials credentials.yml -->
+  <!-- <div id="webchat"/>
+  <script src="https://storage.googleapis.com/mrbot-cdn/webchat-0.5.8.js"></script>
+  <script>
+    WebChat.default.init({
+      selector: "#webchat",
+      initPayload: "/get_started",
+      interval: 1000, // 1000 ms between each message
+      customData: {"userId": "123"}, // arbitrary custom data. Stay minimal as this will be added to the socket
+      socketUrl: "http://localhost:5002",
+      socketPath: "/socket.io/",
+      title: "Title",
+      subtitle: "Subtitle",
+      inputTextFieldHint: "Type a message...",
+      connectingText: "Waiting for server...",
+      hideWhenNotConnected: true,
+      fullScreenMode: false,
+      profileAvatar: "http://to.avat.ar",
+      openLauncherImage: 'myCustomOpenImage.png',
+      closeLauncherImage: 'myCustomCloseImage.png',
+      params: {
+        images: {
+          dims: {
+            width: 300,
+            height: 200,
+          }
+        },
+        storage: "local"
+      }
+    })
+  </script> -->
+  <!-- end of rasa -->
 
 </body>
 

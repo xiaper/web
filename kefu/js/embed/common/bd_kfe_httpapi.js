@@ -447,7 +447,14 @@ var bd_kfe_httpapi = {
           // TODO: 显示留言界面
           // bd_kfe_utils.switchLeaveMessage();
         } else if (response.status_code === 205) {
+          //
+          bd_kfe_data.questionnaireItemItems = message.questionnaire.questionnaireItems[0].questionnaireItemItems;
           // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+          bd_kfe_utils.pushToMessageArray(message);
+          // 1. 保存thread
+          bd_kfe_data.thread = message.thread;
+        }else if (response.status_code === 206) {
+          // 返回机器人初始欢迎语 + 欢迎问题列表
           bd_kfe_utils.pushToMessageArray(message);
           // 1. 保存thread
           bd_kfe_data.thread = message.thread;
@@ -987,42 +994,80 @@ var bd_kfe_httpapi = {
    */
   chooseQuestionnaire: function (itemQid) {
     console.log("choose questionnaire: " + itemQid);
+    // 留学: 意向国家 qid = '201810061551181'
+    // 移民：意向国家 qid = '201810061551183'
+    // 语培：意向类别 qid = '201810061551182'
+    // 其他：意向类别 qid = '201810061551184'
+    // 院校：意向院校 qid = '201810061551185'
     // 只允许同时进行一个会话
     if (bd_kfe_data.isThreadStarted) {
       alert("不能重复请求");
       return;
     }
-    $.ajax({
-      url: bd_kfe_data.HTTP_HOST +
-      "/api/thread/questionnaire?access_token=" +
-      bd_kfe_data.passport.token.access_token,
-      contentType: "application/json; charset=utf-8",
-      type: "get",
-      data: {
-        tId: bd_kfe_data.thread.tid,
-        itemQid: itemQid,
-        client: bd_kfe_data.client
-      },
-      success:function(response){
-        console.log("choose questionnaire success:", response.data);
-        if (
-          response.status_code === 200 ||
-          response.status_code === 201
-        ) {
-          //
-          var message = response.data;
-          // 添加消息
-          bd_kfe_utils.pushToMessageArray(message);
-          // 滚动到底部
-          bd_kfe_utils.scrollToBottom();
-        } else {
-          alert(response.message);
+    //
+    if (itemQid === '201810061551181') {
+      bd_kfe_data.isLiuXue = true
+    } else {
+      bd_kfe_data.isLiuXue = false
+    }
+    //
+    var workGroups = []
+    for (var i = 0; i < bd_kfe_data.questionnaireItemItems.length; i++) {
+        var item = bd_kfe_data.questionnaireItemItems[i]
+        if (item.qid == itemQid) {
+          console.log('qid:' + item.qid + ' == ' + itemQid)
+          workGroups = item.workGroups
+          break;
         }
-      },
-      error: function(error) {
-        console.log("choose questionnaire error:", error);
-      }
-    });
+    }
+    //
+    var message =  {
+        mid: bd_kfe_utils.guid(),
+        type: 'workGroup',
+        content: '选择工作组',
+        workGroups: workGroups,
+        createdAt: bd_kfe_utils.currentTimestamp(),
+        status: 'stored',
+        user: {
+            uid: 'uid',
+            username: '系统用户',
+            nickname: '系统通知',
+            avatar: 'https://chainsnow.oss-cn-shenzhen.aliyuncs.com/avatars/admin_default_avatar.png',
+            visitor: false
+        }
+    }
+    bd_kfe_utils.pushToMessageArray(message)
+    // $.ajax({
+    //   url: bd_kfe_data.HTTP_HOST +
+    //   "/api/thread/questionnaire?access_token=" +
+    //   bd_kfe_data.passport.token.access_token,
+    //   contentType: "application/json; charset=utf-8",
+    //   type: "get",
+    //   data: {
+    //     tId: bd_kfe_data.thread.tid,
+    //     itemQid: itemQid,
+    //     client: bd_kfe_data.client
+    //   },
+    //   success:function(response){
+    //     console.log("choose questionnaire success:", response.data);
+    //     if (
+    //       response.status_code === 200 ||
+    //       response.status_code === 201
+    //     ) {
+    //       //
+    //       var message = response.data;
+    //       // 添加消息
+    //       bd_kfe_utils.pushToMessageArray(message);
+    //       // 滚动到底部
+    //       bd_kfe_utils.scrollToBottom();
+    //     } else {
+    //       alert(response.message);
+    //     }
+    //   },
+    //   error: function(error) {
+    //     console.log("choose questionnaire error:", error);
+    //   }
+    // });
   },
   /**
    * @api {get} /api/thread/country 选择要留学国家
@@ -1090,8 +1135,123 @@ var bd_kfe_httpapi = {
    *
    * @apiUse ResponseResultSuccess
    */
-  chooseWorkGroup: function (wId) {
-    console.log("choose workgroup:", wId);
+  chooseWorkGroup: function (wId, workGroupNickname) {
+    console.log("choose workgroup:", wId, workGroupNickname);
+    // 只允许同时进行一个会话
+    if (bd_kfe_data.isThreadStarted) {
+      alert("不能重复请求");
+      return;
+    }
+    if (bd_kfe_data.isLiuXue) {
+      console.log('is liuxue')
+      bd_kfe_httpapi.chooseWorkGroupLiuXue(wId, workGroupNickname);
+    } else {
+      $.ajax({
+        url: bd_kfe_data.HTTP_HOST +
+        "/api/thread/choose/workGroup?access_token=" +
+        bd_kfe_data.passport.token.access_token,
+        contentType: "application/json; charset=utf-8",
+        type: "get",
+        data: {
+          tId: bd_kfe_data.thread.tid,
+          wId: wId,
+          client: bd_kfe_data.client
+        },
+        success:function(response){
+          console.log("choose workGroup success:", response.data);
+          var message = response.data;
+          if (response.status_code === 200) {
+            //
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+            // 2. 订阅会话消息
+            bd_kfe_stompapi.subscribeTopic(bd_kfe_data.threadTopic());
+            // 3. 加载聊天记录
+            bd_kfe_httpapi.loadMoreMessages();
+            // 4. 头像、标题、描述
+            if (bd_kfe_data.thread.appointed) {
+              bd_kfe_data.title = bd_kfe_data.thread.agent.nickname;
+            } else {
+              bd_kfe_data.title = bd_kfe_data.thread.workGroup.nickname;
+            }
+            // 防止重复点击
+            bd_kfe_data.isThreadStarted = true;
+          } else if (response.status_code === 201) {
+            // message.content = '继续之前会话';
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+            // 2. 订阅会话消息
+            bd_kfe_stompapi.subscribeTopic(bd_kfe_data.threadTopic());
+            // 3. 加载聊天记录
+            bd_kfe_httpapi.loadMoreMessages();
+            // 4. 头像、标题、描述
+            if (bd_kfe_data.thread.appointed) {
+              bd_kfe_data.title = bd_kfe_data.thread.agent.nickname;
+            } else {
+              bd_kfe_data.title = bd_kfe_data.thread.workGroup.nickname;
+            }
+            // 防止重复点击
+            bd_kfe_data.isThreadStarted = true;
+          } else if (response.status_code === 202) {
+            // 排队
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+            // 防止重复点击
+            bd_kfe_data.isThreadStarted = true;
+          } else if (response.status_code === 203) {
+            // 当前非工作时间，请自助查询或留言
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+          } else if (response.status_code === 204) {
+            // 当前无客服在线，请自助查询或留言
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+          } else if (response.status_code === 205) {
+            // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+            bd_kfe_utils.pushToMessageArray(message);
+            // 1. 保存thread
+            bd_kfe_data.thread = message.thread;
+          } else if (response.status_code === -1) {
+            // access token invalid
+            bd_kfe_httpapi.login();
+          } else if (response.status_code === -2) {
+            // sid 或 wid 错误
+            alert("siteId或者工作组id错误");
+          } else if (response.status_code === -3) {
+            alert("您已经被禁言");
+          }
+          //
+          bd_kfe_utils.scrollToBottom();
+        },
+        error: function(error) {
+          console.log("choose workGroup error:", error);
+        }
+      });
+    }
+  },
+  /**
+   * @api {get} /api/thread/choose/workGroup/liuxue 选择留学工作组
+   * @apiName chooseWorkGroupLiuXue
+   * @apiGroup User
+   * @apiVersion 1.4.7
+   * @apiPermission afterLogin
+   * 
+   * @apiParam {String} access_token 访问令牌
+   * @apiParam {String} wId 工作组唯一wid
+   * @apiParam {String} nickname 当前工作组昵称
+   * @apiParam {String} client 固定写死为 'web'
+   * 
+   * @apiDescription 选择工作组
+   *
+   * @apiUse ResponseResultSuccess
+   */
+  chooseWorkGroupLiuXue: function (wId, workGroupNickname) {
+    console.log("choose workgroup liuxue:", wId, workGroupNickname);
     // 只允许同时进行一个会话
     if (bd_kfe_data.isThreadStarted) {
       alert("不能重复请求");
@@ -1099,17 +1259,17 @@ var bd_kfe_httpapi = {
     }
     $.ajax({
       url: bd_kfe_data.HTTP_HOST +
-      "/api/thread/choose/workGroup?access_token=" +
+      "/api/thread/choose/workGroup/liuxue?access_token=" +
       bd_kfe_data.passport.token.access_token,
       contentType: "application/json; charset=utf-8",
       type: "get",
       data: {
-        tId: bd_kfe_data.thread.tid,
         wId: wId,
+        nickname: workGroupNickname,
         client: bd_kfe_data.client
       },
       success:function(response){
-        console.log("choose workGroup success:", response.data);
+        console.log("choose workGroup Liuxue success:", response.data);
         var message = response.data;
         if (response.status_code === 200) {
           //
@@ -1181,6 +1341,86 @@ var bd_kfe_httpapi = {
       },
       error: function(error) {
         console.log("choose workGroup error:", error);
+      }
+    });
+  },
+  /**
+   * @api {get} /api/status/workGroup 获取工作组当前在线状态
+   * @apiName getWorkGroupStatus
+   * @apiGroup WorkGroup
+   * @apiVersion 1.5.6
+   * @apiPermission afterLogin
+   * 
+   * @apiParam {String} access_token 访问令牌
+   * @apiParam {String} wid 工作组唯一wid
+   * @apiParam {String} client 固定写死为 'web'
+   * 
+   * @apiDescription 只要工作组内至少有一个客服在线，则返回为online，否则为offline
+   *
+   * @apiUse ResponseResultSuccess
+   */
+  getWorkGroupStatus: function (wid) {
+    $.ajax({
+      url: bd_kfe_data.HTTP_HOST +
+      "/api/status/workGroup?access_token=" +
+      bd_kfe_data.passport.token.access_token,
+      contentType: "application/json; charset=utf-8",
+      type: "get",
+      data: {
+        wid: wid,
+        client: bd_kfe_data.client
+      },
+      success:function(response){
+        console.log("get workGroup status success:", response.data);
+        if (response.status_code === 200) {
+          var status = response.data.status;
+          console.log('status:' + status)
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(error) {
+        console.log("get workGroup status error:", error);
+      }
+    });
+  },
+  /**
+   * @api {get} /api/status/agent 获取用户当前在线状态
+   * @apiName getUserStatus
+   * @apiGroup User
+   * @apiVersion 1.5.6
+   * @apiPermission afterLogin
+   * 
+   * @apiParam {String} access_token 访问令牌
+   * @apiParam {String} uid 用户唯一uid
+   * @apiParam {String} client 固定写死为 'web'
+   * 
+   * @apiDescription 在线返回为online，否则为offline
+   *
+   * @apiUse ResponseResultSuccess
+   */
+  getUserStatus: function (uid) {
+    $.ajax({
+      url: bd_kfe_data.HTTP_HOST +
+      "/api/status/agent?access_token=" +
+      bd_kfe_data.passport.token.access_token,
+      contentType: "application/json; charset=utf-8",
+      type: "get",
+      data: {
+        uid: uid,
+        client: bd_kfe_data.client
+      },
+      success:function(response){
+        console.log("get user status success:", response.data);
+        if (response.status_code === 200) {
+          var status = response.data.status;
+          console.log('status:' + status)
+        } else {
+          alert(response.message);
+        }
+      },
+      error: function(error) {
+        console.log("get user status error:", error);
       }
     });
   }

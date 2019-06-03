@@ -83,7 +83,7 @@
         '                        <!--消息记录pc-->\n' +
         '                        <div id="byteDesk-message-pc">\n' +
         '\n' +
-        '                            <ul class="byteDesk-message-ul" ref="list">\n' +
+        '                            <ul id="byteDesk-message-ul" class="byteDesk-message-ul" ref="list">\n' +
         '\n' +
         '                                <!--<div v-if="thread.tid !== 0 && !thread.last" class="byteDesk-pullrefresh" @click="loadMoreMessages()">更多聊天记录</div>-->\n' +
         '                                <li v-for="message in messages" :key="message.mid">\n' +
@@ -122,7 +122,7 @@
         '                                            <span>{{ message.content }}</span>\n' +
         '                                            <span v-for="item in message.workGroups" :key="item.id">\n' +
         '                                                <br/>\n' +
-        '                                                <span style="color:#007bff; cursor: pointer;" @click="chooseWorkGroup(item.wid)">{{ item.nickname }}</span>\n' +
+        '                                                <span style="color:#007bff; cursor: pointer;" @click="chooseWorkGroup(item.wid, item.nickname)">{{ item.nickname }}</span>\n' +
         '                                            </span>\n' +
         '                                        </div>\n' +
         '                                        <div v-if="is_type_image(message)" class="byteDesk-text">\n' +

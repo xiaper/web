@@ -14,11 +14,11 @@
                 avatar: '//chainsnow.oss-cn-shenzhen.aliyuncs.com/images/20180711094054.png',
                 title: '智能客服',
                 description: 'www.bytedesk.com',
-                HTTP_HOST: "http://127.0.0.1:8000",
-                STOMP_HOST: "http://127.0.0.1:8000",
-                // HTTP_HOST: 'https://api.bytedesk.com',
-                // STOMP_HOST: 'https://stomp.bytedesk.com',
-
+                // HTTP_HOST: "http://127.0.0.1:8000",
+                // STOMP_HOST: "http://127.0.0.1:8000",
+                HTTP_HOST: 'https://api.bytedesk.com',
+                STOMP_HOST: 'https://stomp.bytedesk.com',
+                //
                 imageDialogVisible: false,
                 currentImageUrl: '',
                 currentVoiceUrl: '',
@@ -125,6 +125,9 @@
                 isReconnect: false,
                 answers: [],
                 isRobot: false,
+                //
+                isLiuXue: false,
+                questionnaireItemItems: Object,
                 //
                 emotionBaseUrl: 'https://chainsnow.oss-cn-shenzhen.aliyuncs.com/emojis/gif/',
                 // 表情
@@ -457,13 +460,17 @@
             },
             scrollToBottom () {
                 // 聊天记录滚动到最底部
-                let vm = this
-                this.$nextTick(() => {
-                    const ul = vm.$refs.list
-                    if (ul != null) {
-                        ul.scrollTop = ul.scrollHeight
-                    }
-                })
+                $("#byteDesk-message-ul").animate(
+                { scrollTop: $("#byteDesk-message-ul")[0].scrollHeight },
+                "slow"
+                );
+                // var vm = this
+                // this.$nextTick(() => {
+                //     const ul = vm.$refs.list
+                //     if (ul != null) {
+                //         ul.scrollTop = ul.scrollHeight
+                //     }
+                // })
             },
             /**
              * 上传图片相关函数
@@ -492,7 +499,7 @@
                 if (result.status_code === 200) {
                     // this.uploadedImageList.push({name: file.name, url: result.data});
                     // 发送消息
-                    let imageUrl = result.data;
+                    var imageUrl = result.data;
                     this.sendImageMessage(imageUrl);
                 }
                 else {
@@ -512,7 +519,7 @@
                     this.$message.error('上传头像图片大小不能超过 2MB!');
                 }
                 // 设置文件名
-                let filename = moment(new Date()).format('YYYYMMDDHHmmss');
+                var filename = moment(new Date()).format('YYYYMMDDHHmmss');
                 if (file.type === 'image/jpeg') {
                     this.upload_data.file_name = filename + '.jpg';
                 }
@@ -527,40 +534,40 @@
              */
             initAxios() {
                 // http response 拦截器
-                axios.interceptors.response.use(
-                    response => {
-                        return response
-                    },
-                    error => {
-                        if (error.response) {
-                            switch (error.response.status) {
-                                // FIXME: 修复因为400引起的错误，多数情况是因为切换测试、线上环境引起
-                                // case 400:
-                                //     console.log('axios interception error 400');
-                                //     break;
-                                case 401:
-                                    console.log('axios interception error 401');
-                                case 403:
-                                    // 401 清除token信息并登录
-                                    // 403 无权限
-                                    console.log('axios interception error 403');
-                                    localStorage.removeItem('username');
-                                    localStorage.removeItem('nickname');
-                                    localStorage.removeItem('uid');
-                                    localStorage.removeItem('token');
-                                    // localStorage.clear();
-                                    // localStorage.removeItem(bytedeskapp.token);
-                                    if (bytedeskapp.username !== undefined
-                                        && bytedeskapp.username !== null
-                                        && bytedeskapp.username !== '') {
-                                        bytedeskapp.login()
-                                    } else {
-                                        bytedeskapp.requestUsername();
-                                    }
-                            }
-                        }
-                        return 'return axios interception error'
-                    })
+                // axios.interceptors.response.use(
+                //     response => {
+                //         return response
+                //     },
+                //     error => {
+                //         if (error.response) {
+                //             switch (error.response.status) {
+                //                 // FIXME: 修复因为400引起的错误，多数情况是因为切换测试、线上环境引起
+                //                 // case 400:
+                //                 //     console.log('axios interception error 400');
+                //                 //     break;
+                //                 case 401:
+                //                     console.log('axios interception error 401');
+                //                 case 403:
+                //                     // 401 清除token信息并登录
+                //                     // 403 无权限
+                //                     console.log('axios interception error 403');
+                //                     localStorage.removeItem('username');
+                //                     localStorage.removeItem('nickname');
+                //                     localStorage.removeItem('uid');
+                //                     localStorage.removeItem('token');
+                //                     // localStorage.clear();
+                //                     // localStorage.removeItem(bytedeskapp.token);
+                //                     if (bytedeskapp.username !== undefined
+                //                         && bytedeskapp.username !== null
+                //                         && bytedeskapp.username !== '') {
+                //                         bytedeskapp.login()
+                //                     } else {
+                //                         bytedeskapp.requestUsername();
+                //                     }
+                //             }
+                //         }
+                //         return 'return axios interception error'
+                //     })
             },
             getUrlParam(name) {
                 var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)"); //构造一个含有目标参数的正则表达式对象
@@ -585,31 +592,62 @@
                     this.login();
                 } else {
                     //
-                    axios.get( this.HTTP_HOST + '/visitor/api/username', {
-                        params: {
-                            'subDomain': this.subDomain,
-                            'client': this.client
+                    // axios.get( this.HTTP_HOST + '/visitor/api/username', {
+                    //     params: {
+                    //         'subDomain': this.subDomain,
+                    //         'client': this.client
+                    //     }
+                    // }).then(response => {
+                    //     console.log('username:', response.data);
+
+                    //     // 登录
+                    //     bytedeskapp.uid = response.data.data.uid;
+                    //     bytedeskapp.username = response.data.data.username;
+                    //     bytedeskapp.password = bytedeskapp.username;
+                    //     bytedeskapp.nickname = response.data.data.nickname;
+
+                    //     // 本地存储
+                    //     localStorage.uid = bytedeskapp.uid;
+                    //     localStorage.username = bytedeskapp.username;
+                    //     localStorage.nickname = bytedeskapp.nickname;
+                    //     localStorage.password = bytedeskapp.password;
+
+                    //     // 登录
+                    //     bytedeskapp.login();
+
+                    // }).catch(error => {
+                    //     console.log(error)
+                    // });
+
+                    //
+                    $.ajax({
+                        url: this.HTTP_HOST + "/visitor/api/username",
+                        contentType: "application/json; charset=utf-8",
+                        type: "get",
+                        data: {
+                            subDomain: this.subDomain,
+                            client: this.client
+                        },
+                        success:function(response){
+                            // 登录
+                            bytedeskapp.uid = response.data.uid;
+                            bytedeskapp.username = response.data.username;
+                            bytedeskapp.password = bytedeskapp.username;
+                            bytedeskapp.nickname = response.data.nickname;
+
+                            // 本地存储
+                            localStorage.uid = bytedeskapp.uid;
+                            localStorage.username = bytedeskapp.username;
+                            localStorage.nickname = bytedeskapp.nickname;
+                            localStorage.password = bytedeskapp.password;
+
+                            // 登录
+                            bytedeskapp.login();
+                        },
+                        error: function(error) {
+                        //Do Something to handle error
+                        console.log(error);
                         }
-                    }).then(response => {
-                        console.log('username:', response.data);
-
-                        // 登录
-                        bytedeskapp.uid = response.data.data.uid;
-                        bytedeskapp.username = response.data.data.username;
-                        bytedeskapp.password = bytedeskapp.username;
-                        bytedeskapp.nickname = response.data.data.nickname;
-
-                        // 本地存储
-                        localStorage.uid = bytedeskapp.uid;
-                        localStorage.username = bytedeskapp.username;
-                        localStorage.nickname = bytedeskapp.nickname;
-                        localStorage.password = bytedeskapp.password;
-
-                        // 登录
-                        bytedeskapp.login();
-
-                    }).catch(error => {
-                        console.log(error)
                     });
                 }
             },
@@ -617,76 +655,111 @@
              * 2. oauth2登录
              */
             login () {
-                axios({
-                    method: 'post',
-                    url: this.HTTP_HOST + '/oauth/token',
-                    params: {
-                        'username': this.username,
-                        'password': this.password,
-                        'grant_type': 'password',
-                        'scope': 'all'
+                // axios({
+                //     method: 'post',
+                //     url: this.HTTP_HOST + '/oauth/token',
+                //     params: {
+                //         'username': this.username,
+                //         'password': this.password,
+                //         'grant_type': 'password',
+                //         'scope': 'all'
+                //     },
+                //     auth: {
+                //         username: 'client',
+                //         password: 'secret'
+                //     }
+                // }).then(function (response) {
+                //     console.log('login success: ',response.data);
+                //     //
+                //     if (response.data !== null && response.data !== undefined) {
+                //         // 本地存储，
+                //         bytedeskapp.passport.token = response.data;
+                //         // 本地存储
+                //         localStorage.username = bytedeskapp.username;
+                //         localStorage.password = bytedeskapp.password;
+                //         // localStorage 存储
+                //         localStorage.setItem(bytedeskapp.token, JSON.stringify(response.data));
+                //         // 建立长连接
+                //         bytedeskapp.byteDeskConnect();
+                //         // 通知服务器，访客浏览网页中
+                //         bytedeskapp.fingerPrint2();
+                //         // 加载常见问题
+                //         bytedeskapp.getTopAnswers();
+                //     }
+                // }).catch(function (error) {
+                //     console.log(error)
+                // })
+                //
+                $.ajax({
+                    url: this.HTTP_HOST + "/oauth/token",
+                    type: "post",
+                    data: { 
+                    "username": this.username,
+                    "password": this.password,
+                    "grant_type": "password",
+                    "scope": "all"
                     },
-                    auth: {
-                        username: 'client',
-                        password: 'secret'
-                    }
-                }).then(function (response) {
-                    console.log('login success: ',response.data);
-                    //
-                    if (response.data !== null && response.data !== undefined) {
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader('Authorization', 'Basic Y2xpZW50OnNlY3JldA==');
+                    },
+                    success:function(response){
+                        console.log("login success: ", response);
                         // 本地存储，
-                        bytedeskapp.passport.token = response.data;
+                        bytedeskapp.passport.token = response;
                         // 本地存储
                         localStorage.username = bytedeskapp.username;
                         localStorage.password = bytedeskapp.password;
                         // localStorage 存储
-                        localStorage.setItem(bytedeskapp.token, JSON.stringify(response.data));
+                        localStorage.setItem(bytedeskapp.token, JSON.stringify(response));
                         // 建立长连接
                         bytedeskapp.byteDeskConnect();
                         // 通知服务器，访客浏览网页中
                         bytedeskapp.fingerPrint2();
                         // 加载常见问题
                         bytedeskapp.getTopAnswers();
+                        
+                    },
+                    error: function(error) {
+                    //Do Something to handle error
+                    console.log(error);
                     }
-                }).catch(function (error) {
-                    console.log(error)
-                })
+                });
             },
             /**
              * 获取设备指纹
              * TODO: fingerPrint2 与 browse 合并为一个接口？
              */
             fingerPrint2() {
-                new Fingerprint2({
-                    preprocessor: function(key, value) {
-                        if (key == "user_agent") {
-                            // https://github.com/faisalman/ua-parser-js
-                            var parser = new UAParser(value);
-                            var result = JSON.stringify(parser.getResult());
-                            // console.log(result);
-                            return result;
-                        } else {
-                            return value
-                        }
-                    }
-                }).get(function(result, components) {
-                    // console.log(result); //a hash, representing your device fingerprint
-                    // console.log(components); // an array of FP components
-                    const params = new URLSearchParams();
-                    params.append('hash', result);
-                    for (var index in components) {
-                        var obj = components[index];
-                        var key = obj.key;
-                        var value = obj.value;
-                        params.append(key, value.toString());
-                    }
-                    axios.post(bytedeskapp.HTTP_HOST + "/api/fingerprint2/browser?access_token=" + bytedeskapp.passport.token.access_token, params)
-                        .then(response => {
-                            // console.log("fingerprint2: ", response.data);
-                        }).catch(error => {
-                        console.log(error);
-                    });
-                });
+                // new Fingerprint2({
+                //     preprocessor: function(key, value) {
+                //         if (key == "user_agent") {
+                //             // https://github.com/faisalman/ua-parser-js
+                //             var parser = new UAParser(value);
+                //             var result = JSON.stringify(parser.getResult());
+                //             // console.log(result);
+                //             return result;
+                //         } else {
+                //             return value
+                //         }
+                //     }
+                // }).get(function(result, components) {
+                //     // console.log(result); //a hash, representing your device fingerprint
+                //     // console.log(components); // an array of FP components
+                //     const params = new URLSearchParams();
+                //     params.append('hash', result);
+                //     for (var index in components) {
+                //         var obj = components[index];
+                //         var key = obj.key;
+                //         var value = obj.value;
+                //         params.append(key, value.toString());
+                //     }
+                //     axios.post(bytedeskapp.HTTP_HOST + "/api/fingerprint2/browser?access_token=" + bytedeskapp.passport.token.access_token, params)
+                //         .then(response => {
+                //             // console.log("fingerprint2: ", response.data);
+                //         }).catch(error => {
+                //         console.log(error);
+                //     });
+                // });
             },
             /**
              * 通知服务器，访客浏览网页中
@@ -694,155 +767,270 @@
              */
             browse() {
                 //
-                var keywords = '';//document.getElementsByName('keywords')[0].content;
-                var description = '';//document.getElementsByName('description')[0].content;
-                var url = window.location.href;
-                url = url.endsWith('#') ? url.substring(0, url.length - 1) : url;
-                //
-                axios.post(this.HTTP_HOST + '/api/browse/notify?access_token=' + this.passport.token.access_token, {
-                    adminUid: this.adminUid,
-                    workGroupWid: this.workGroupWid,
-                    client: this.client,
-                    sessionId: this.sessionId,
-                    referrer: encodeURI(document.referrer),
-                    url: encodeURI(url),
-                    title: encodeURI(document.title),
-                    keywords: encodeURI(keywords),
-                    description: encodeURI(description)
-                }).then(response => {
-                    console.log('browse:', response.data);
-                }).catch(error => {
-                    console.log(error)
-                });
+                // var keywords = '';//document.getElementsByName('keywords')[0].content;
+                // var description = '';//document.getElementsByName('description')[0].content;
+                // var url = window.location.href;
+                // url = url.endsWith('#') ? url.substring(0, url.length - 1) : url;
+                // //
+                // axios.post(this.HTTP_HOST + '/api/browse/notify?access_token=' + this.passport.token.access_token, {
+                //     adminUid: this.adminUid,
+                //     workGroupWid: this.workGroupWid,
+                //     client: this.client,
+                //     sessionId: this.sessionId,
+                //     referrer: encodeURI(document.referrer),
+                //     url: encodeURI(url),
+                //     title: encodeURI(document.title),
+                //     keywords: encodeURI(keywords),
+                //     description: encodeURI(description)
+                // }).then(response => {
+                //     console.log('browse:', response.data);
+                // }).catch(error => {
+                //     console.log(error)
+                // });
             },
             acceptInviteBrowse() {
                 //
-                axios.post(this.HTTP_HOST + '/api/browse/invite/accept?access_token=' + this.passport.token.access_token, {
-                    biid: this.browseInviteBIid,
-                    client: this.client
-                }).then(response => {
-                    console.log('browse invite accept:', response.data);
-                    // TODO: 打开对话窗口
-                    bytedeskapp.byteDeskVisible = true;
-                    // FIXME: 应该调用指定客服接口
-                    bytedeskapp.requestThread();
-                }).catch(error => {
-                    console.log(error)
-                });
+                // axios.post(this.HTTP_HOST + '/api/browse/invite/accept?access_token=' + this.passport.token.access_token, {
+                //     biid: this.browseInviteBIid,
+                //     client: this.client
+                // }).then(response => {
+                //     console.log('browse invite accept:', response.data);
+                //     // TODO: 打开对话窗口
+                //     bytedeskapp.byteDeskVisible = true;
+                //     // FIXME: 应该调用指定客服接口
+                //     bytedeskapp.requestThread();
+                // }).catch(error => {
+                //     console.log(error)
+                // });
             },
             rejectInviteBrowse() {
                 //
-                axios.post(this.HTTP_HOST + '/api/browse/invite/reject?access_token=' + this.passport.token.access_token, {
-                    biid: this.browseInviteBIid,
-                    client: this.client
-                }).then(response => {
-                    console.log('browse invite reject:', response.data);
-                }).catch(error => {
-                    console.log(error)
-                });
+                // axios.post(this.HTTP_HOST + '/api/browse/invite/reject?access_token=' + this.passport.token.access_token, {
+                //     biid: this.browseInviteBIid,
+                //     client: this.client
+                // }).then(response => {
+                //     console.log('browse invite reject:', response.data);
+                // }).catch(error => {
+                //     console.log(error)
+                // });
             },
             /**
              * 断开重连之后更新session id
              */
             updateSessionId() {
                 console.log('session id:', this.sessionId, ' pre session id:', this.preSessionId);
-                axios.post(this.HTTP_HOST + '/api/browse/update/sessionId?access_token=' + this.passport.token.access_token, {
-                    sessionId: this.sessionId,
-                    preSessionId: this.preSessionId
-                }).then(response => {
-                    console.log('update session id:', response.data);
-                }).catch(error => {
-                    console.log(error)
-                });
+                // axios.post(this.HTTP_HOST + '/api/browse/update/sessionId?access_token=' + this.passport.token.access_token, {
+                //     sessionId: this.sessionId,
+                //     preSessionId: this.preSessionId
+                // }).then(response => {
+                //     console.log('update session id:', response.data);
+                // }).catch(error => {
+                //     console.log(error)
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/browse/update/sessionId?access_token=" + this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    type: "post",
+                    data: JSON.stringify({
+                      sessionId: this.sessionId,
+                      preSessionId: this.preSessionId
+                    }),
+                    success:function(response){
+                      console.log("update session id:", response);
+                    },
+                    error: function(error) {
+                      console.log(error);
+                    }
+                  });
             },
             /**
              * 请求会话
              */
             requestThread() {
                 //
-                axios.get(this.HTTP_HOST + '/api/thread/request?access_token=' + this.passport.token.access_token, {
-                    params: {
-                        'uId': this.adminUid,
-                        'wId': this.workGroupWid,
-                        'type': this.type,
-                        'aId': this.agentUid,
-                        'client': this.client
-                    }
-                }).then(response => {
-                    console.log('message:', response.data);
-                    let message = response.data.data;
-                    if (response.data.status_code === 200) {
+                // axios.get(this.HTTP_HOST + '/api/thread/request?access_token=' + this.passport.token.access_token, {
+                //     params: {
+                //         'uId': this.adminUid,
+                //         'wId': this.workGroupWid,
+                //         'type': this.type,
+                //         'aId': this.agentUid,
+                //         'client': this.client
+                //     }
+                // }).then(response => {
+                //     console.log('message:', response.data);
+                //     var message = response.data.data;
+                //     if (response.data.status_code === 200) {
+                //         //
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //         // 3. 加载聊天记录
+                //         bytedeskapp.loadMoreMessages();
+                //         // 4. 头像、标题、描述
+                //         if (message.thread.agent) {
+                //             bytedeskapp.avatar = message.thread.agent.avatar;
+                //             bytedeskapp.title = message.thread.agent.nickname;
+                //             bytedeskapp.description = message.thread.agent.description;
+                //         }
+
+                //     } else if (response.data.status_code === 201) {
+                //         // 继续之前会话
+                //         var thread = response.data.data;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //         // 3. 加载聊天记录
+                //         bytedeskapp.loadMoreMessages();
+                //         // 4. 头像、标题、描述
+                //         if (thread.agent) {
+                //             bytedeskapp.avatar = thread.agent.avatar;
+                //             bytedeskapp.title = thread.agent.nickname;
+                //             bytedeskapp.description = thread.agent.description;
+                //         }
+
+                //     } else if (response.data.status_code === 202) {
+                //         // 排队
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //     } else if (response.data.status_code === 203) {
+                //         // 当前非工作时间，请自助查询或留言
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //     } else if (response.data.status_code === 204) {
+                //         // 当前无客服在线，请自助查询或留言
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //     } else if (response.data.status_code === 205) {
+                //         // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //     } else if (response.data.status_code === -1) {
+                //         // access token invalid
+                //         bytedeskapp.login();
+                //     } else if (response.data.status_code === -2) {
+                //         // sid 或 wid 错误
+                //         this.$message.error('siteId或者工作组id错误');
+                //     }
+                //     //
+                //     bytedeskapp.scrollToBottom()
+                // }).catch(error => {
+                //     console.log(error)
+                // });
+
+                $.ajax({
+                    url: this.HTTP_HOST + "/api/thread/request",
+                    contentType: "application/json; charset=utf-8",
+                    type: "get",
+                    data: {
+                      access_token: this.passport.token.access_token,
+                      wId: this.workGroupWid,
+                      type: this.type,
+                      aId: this.agentUid,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("message:", response);
+                        var message = response.data;
+                        if (response.status_code === 200) {
+                            //
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                            // 3. 加载聊天记录
+                            bytedeskapp.loadMoreMessages();
+                            // 4. 头像、标题、描述
+                            if (message.thread.agent) {
+                                bytedeskapp.avatar = message.thread.agent.avatar;
+                                bytedeskapp.title = message.thread.agent.nickname;
+                                bytedeskapp.description = message.thread.agent.description;
+                            }
+
+                        } else if (response.status_code === 201) {
+                            // 继续之前会话
+                            var thread = response.data;
+                            // 1. 保存thread
+                            bytedeskapp.thread = thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                            // 3. 加载聊天记录
+                            bytedeskapp.loadMoreMessages();
+                            // 4. 头像、标题、描述
+                            if (thread.agent) {
+                                bytedeskapp.avatar = thread.agent.avatar;
+                                bytedeskapp.title = thread.agent.nickname;
+                                bytedeskapp.description = thread.agent.description;
+                            }
+
+                        } else if (response.status_code === 202) {
+                            // 排队
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                        } else if (response.status_code === 203) {
+                            // 当前非工作时间，请自助查询或留言
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                        } else if (response.status_code === 204) {
+                            // 当前无客服在线，请自助查询或留言
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                        } else if (response.status_code === 205) {
+                            //
+                            bytedeskapp.questionnaireItemItems = message.questionnaire.questionnaireItems[0].questionnaireItemItems
+                            // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                        } else if (response.status_code === 206) {
+                            // 当前无客服在线，请自助查询或留言
+                            bytedeskapp.pushToMessageArray(message);;
+                            // 1. 保存thread
+                            bytedeskapp.thread = message.thread;
+                            // 2. 订阅会话消息
+                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                          } else if (response.status_code === -1) {
+                            // access token invalid
+                            bytedeskapp.login();
+                        } else if (response.status_code === -2) {
+                            // sid 或 wid 错误
+                            this.$message.error('siteId或者工作组id错误');
+                        }
                         //
-                        bytedeskapp.messages.push(message);
-                        // 1. 保存thread
-                        bytedeskapp.thread = message.thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                        // 3. 加载聊天记录
-                        bytedeskapp.loadMoreMessages();
-                        // 4. 头像、标题、描述
-                        if (message.thread.agent) {
-                            bytedeskapp.avatar = message.thread.agent.avatar;
-                            bytedeskapp.title = message.thread.agent.nickname;
-                            bytedeskapp.description = message.thread.agent.description;
-                        }
-
-                    } else if (response.data.status_code === 201) {
-                        // 继续之前会话
-                        let thread = response.data.data;
-                        // 1. 保存thread
-                        bytedeskapp.thread = thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                        // 3. 加载聊天记录
-                        bytedeskapp.loadMoreMessages();
-                        // 4. 头像、标题、描述
-                        if (thread.agent) {
-                            bytedeskapp.avatar = thread.agent.avatar;
-                            bytedeskapp.title = thread.agent.nickname;
-                            bytedeskapp.description = thread.agent.description;
-                        }
-
-                    } else if (response.data.status_code === 202) {
-                        // 排队
-                        bytedeskapp.messages.push(message);
-                        // 1. 保存thread
-                        bytedeskapp.thread = message.thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                    } else if (response.data.status_code === 203) {
-                        // 当前非工作时间，请自助查询或留言
-                        bytedeskapp.messages.push(message);
-                        // 1. 保存thread
-                        bytedeskapp.thread = message.thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                    } else if (response.data.status_code === 204) {
-                        // 当前无客服在线，请自助查询或留言
-                        bytedeskapp.messages.push(message);
-                        // 1. 保存thread
-                        bytedeskapp.thread = message.thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                    } else if (response.data.status_code === 205) {
-                        // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
-                        bytedeskapp.messages.push(message);
-                        // 1. 保存thread
-                        bytedeskapp.thread = message.thread;
-                        // 2. 订阅会话消息
-                        bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                    } else if (response.data.status_code === -1) {
-                        // access token invalid
-                        bytedeskapp.login();
-                    } else if (response.data.status_code === -2) {
-                        // sid 或 wid 错误
-                        this.$message.error('siteId或者工作组id错误');
+                        bytedeskapp.scrollToBottom()
+                    },
+                    error: function(error) {
+                      console.log(error);
                     }
-                    //
-                    bytedeskapp.scrollToBottom()
-                }).catch(error => {
-                    console.log(error)
-                });
+                  });
             },
             requestRobot() {
                 console.log("自助答疑")
@@ -859,18 +1047,40 @@
                     this.$message({ message: '不能重复评价', type: 'warning' });
                     return;
                 }
-                axios.post(this.HTTP_HOST + "/api/rate/do?access_token=" + bytedeskapp.passport.token.access_token, {
-                    tid: this.thread.tid,
-                    score: this.rateScore + "",
-                    note: this.rateContent,
-                    invite: this.isInviteRate ? "1" : "0",
-                    client: 'web'
-                }).then(response => {
-                    console.log("rate: ", response.data);
-                    this.isRated = true
-                }).catch(error => {
-                    console.log(error);
-                });
+                // axios.post(this.HTTP_HOST + "/api/rate/do?access_token=" + bytedeskapp.passport.token.access_token, {
+                //     tid: this.thread.tid,
+                //     score: this.rateScore + "",
+                //     note: this.rateContent,
+                //     invite: this.isInviteRate ? "1" : "0",
+                //     client: 'web'
+                // }).then(response => {
+                //     console.log("rate: ", response.data);
+                //     this.isRated = true
+                // }).catch(error => {
+                //     console.log(error);
+                // });
+
+                $.ajax({
+                    url: this.HTTP_HOST + "/api/rate/do?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    type: "post",
+                    data: JSON.stringify({
+                      tid: this.thread.tid,
+                      score: this.rateScore + "", // 考虑到兼容ios客户端，需要转换为字符串
+                      note: this.rateContent,
+                      invite: this.isInviteRate ? "1" : "0", // 考虑到兼容ios客户端，需要转换为字符串
+                      client: this.client
+                    }),
+                    success:function(response){
+                      console.log("rate: ", response);
+                      this.isRated = true
+                    },
+                    error: function(error) {
+                      console.log(error);
+                    }
+                  });
             },
             /**
              * 加载更多聊天记录
@@ -889,7 +1099,7 @@
                 //     if (response.data.status_code === 200)  {
                 //         //
                 //         response.data.data.content.forEach(message => {
-                //             let contains = bytedeskapp.messages.some(msg => {
+                //             var contains = bytedeskapp.messages.some(msg => {
                 //                 return msg.id === message.id
                 //             });
                 //             if (!contains) {
@@ -909,302 +1119,764 @@
              * 加载常见问题
              */
             initAnswer() {
-                axios.get(this.HTTP_HOST + '/api/answer/init?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'uid': this.adminUid,
-                        'tid': this.thread.tid,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("query answer success:",response.data);
-                        if (response.data.status_code === 200)  {
+                // axios.get(this.HTTP_HOST + '/api/answer/init?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'uid': this.adminUid,
+                //         'tid': this.thread.tid,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("query answer success:",response.data);
+                //     if (response.data.status_code === 200)  {
+                //         //
+                //         var queryMessage = response.data.data;
+                //         //
+                //         bytedeskapp.messages.push(queryMessage);
+                //         bytedeskapp.scrollToBottom()
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("query answers error:",error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/answer/init?access_token=" +
+                    this.passport.token.access_token,
+                    type: "get",
+                    data: {
+                      uid: this.adminUid,
+                      tid: this.thread.tid,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("query answer success:", response);
+                        if (response.status_code === 200)  {
                             //
-                            let queryMessage = response.data.data;
+                            var queryMessage = response.data;
                             //
                             bytedeskapp.messages.push(queryMessage);
                             bytedeskapp.scrollToBottom()
                         } else {
-                            this.$message.warning(response.data.message)
+                            this.$message.warning(response.message)
                         }
-                    })
-                    .catch(function (error) {
-                        console.log("query answers error:",error);
-                    });
+                    },
+                    error: function(error) {
+                      console.log("query answers error:", error);
+                    }
+                  });
             },
             getTopAnswers() {
-                axios.get(this.HTTP_HOST + '/api/answer/top?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'uid': this.adminUid,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("fetch answers success:",response.data);
-                        if (response.data.status_code === 200)  {
-                            bytedeskapp.answers = response.data.data
+                // axios.get(this.HTTP_HOST + '/api/answer/top?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'uid': this.adminUid,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("fetch answers success:",response.data);
+                //     if (response.data.status_code === 200)  {
+                //         bytedeskapp.answers = response.data.data
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("fetch answers error:",error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/answer/top?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    type: "get",
+                    data: {
+                      uid: this.adminUid,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("fetch answers success:", response);
+                        if (response.status_code === 200)  {
+                            bytedeskapp.answers = response.data
                         } else {
-                            this.$message.warning(response.data.message)
+                            this.$message.warning(response.message)
                         }
-                    })
-                    .catch(function (error) {
-                        console.log("fetch answers error:",error);
-                    });
+                    },
+                    error: function(error) {
+                      console.log("fetch answers error:", error);
+                    }
+                  });
             },
             // 根据aid，请求智能答案
             getAnswer(aid) {
-                axios.get(this.HTTP_HOST + '/api/answer/query?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'uid': this.adminUid,
-                        'tid': this.thread.tid,
-                        'aid': aid,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("query answer success:",response.data);
-                        if (response.data.status_code === 200)  {
+                // axios.get(this.HTTP_HOST + '/api/answer/query?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'uid': this.adminUid,
+                //         'tid': this.thread.tid,
+                //         'aid': aid,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("query answer success:",response.data);
+                //     if (response.data.status_code === 200)  {
+                //         //
+                //         var queryMessage = response.data.data.query;
+                //         var replyMessage = response.data.data.reply;
+                //         //
+                //         bytedeskapp.messages.push(queryMessage);
+                //         bytedeskapp.messages.push(replyMessage);
+                //         //
+                //         bytedeskapp.scrollToBottom()
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("query answers error:",error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/answer/query?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    type: "get",
+                    data: {
+                      uid: this.adminUid,
+                      tid: this.thread.tid,
+                      aid: aid,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("query answer success:", response);
+                        if (response.status_code === 200)  {
                             //
-                            let queryMessage = response.data.data.query;
-                            let replyMessage = response.data.data.reply;
+                            var queryMessage = response.data.query;
+                            var replyMessage = response.data.reply;
                             //
                             bytedeskapp.messages.push(queryMessage);
                             bytedeskapp.messages.push(replyMessage);
                             //
                             bytedeskapp.scrollToBottom()
                         } else {
-                            this.$message.warning(response.data.message)
+                            this.$message.warning(response.message)
                         }
-                    })
-                    .catch(function (error) {
-                        console.log("query answers error:",error);
-                    });
+                    },
+                    error: function(error) {
+                      console.log("query answers error:", error);
+                    }
+                  });
             },
             // 更加输入内容，请求智能答案
             messageAnswer(content) {
-                axios.get(this.HTTP_HOST + '/api/answer/message?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'uid': this.adminUid,
-                        'tid': this.thread.tid,
-                        'content': content,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("query answer success:",response.data);
-                        if (response.data.status_code === 200 ||
-                            response.data.status_code === 201)  {
+                // axios.get(this.HTTP_HOST + '/api/answer/message?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'uid': this.adminUid,
+                //         'tid': this.thread.tid,
+                //         'content': content,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("query answer success:",response.data);
+                //     if (response.data.status_code === 200 ||
+                //         response.data.status_code === 201)  {
+                //         //
+                //         var queryMessage = response.data.data.query;
+                //         var replyMessage = response.data.data.reply;
+                //         //
+                //         bytedeskapp.messages.push(queryMessage);
+                //         bytedeskapp.messages.push(replyMessage);
+                //         bytedeskapp.scrollToBottom()
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("query answers error:",error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/answer/message?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    type: "get",
+                    data: {
+                      uid: this.adminUid,
+                      tid: this.thread.tid,
+                      content: content,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("query answer success:", response);
+                        if (response.status_code === 200 ||
+                            response.status_code === 201)  {
                             //
-                            let queryMessage = response.data.data.query;
-                            let replyMessage = response.data.data.reply;
+                            var queryMessage = response.data.query;
+                            var replyMessage = response.data.reply;
                             //
                             bytedeskapp.messages.push(queryMessage);
                             bytedeskapp.messages.push(replyMessage);
                             bytedeskapp.scrollToBottom()
                         } else {
-                            this.$message.warning(response.data.message)
+                            this.$message.warning(response.message)
                         }
-                    })
-                    .catch(function (error) {
-                        console.log("query answers error:",error);
-                    });
+                    },
+                    error: function(error) {
+                      console.log("query answers error:", error);
+                    }
+                  });
             },
             rateAnswer(rate) {
                 //
-                axios.post(this.HTTP_HOST + '/api/answer/rate?access_token=' + this.passport.token.access_token, {
-                    uid: this.adminUid,
-                    aid: this.aid,
-                    rate: rate,
-                    client: 'web'
-                }).then(response => {
-                    console.log("success:", response.data);
-                    if (response.data.status_code === 200)  {
+                // axios.post(this.HTTP_HOST + '/api/answer/rate?access_token=' + this.passport.token.access_token, {
+                //     uid: this.adminUid,
+                //     aid: this.aid,
+                //     rate: rate,
+                //     client: 'web'
+                // }).then(response => {
+                //     console.log("success:", response.data);
+                //     if (response.data.status_code === 200)  {
+                //         //
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // }).catch(error => {
+                //     console.log(error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/answer/rate?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    type: "post",
+                    data: JSON.stringify({
+                      uid: this.adminUid,
+                      aid: this.aid,
+                      rate: rate,
+                      client: this.client
+                    }),
+                    success:function(response){
+                      console.log("success:", response);
+                      if (response.status_code === 200) {
                         //
-                    } else {
-                        this.$message.warning(response.data.message)
+                      } else {
+                        alert(response.message);
+                      }
+                    },
+                    error: function(error) {
+                      console.log("query answers error:", error);
                     }
-                }).catch(error => {
-                    console.log(error);
-                });
+                  });
             },
             /**
              * 留言
              */
             leaveMessage() {
-                this.$refs['leaveMessageForm'].validate((valid) => {
-                    if (valid) {
-                        axios.post(this.HTTP_HOST + "/api/leavemsg/save?access_token=" + bytedeskapp.passport.token.access_token, {
-                            uid: this.adminUid,
-                            mobile: this.leaveMessageForm.mobile,
-                            email: this.leaveMessageForm.email,
-                            content: this.leaveMessageForm.content,
-                            client: 'web'
-                        }).then(response => {
-                            console.log("leave message: ", response.data);
-                            if (response.data.status_code === 200) {
+                if (this.leaveMessageForm.mobile.trim().length() > 0 && this.leaveMessageForm.content.trim().length() > 0) {
+                    $.ajax({
+                        url: this.HTTP_HOST +
+                        "/api/leavemsg/save?access_token=" +
+                        this.passport.token.access_token,
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        type: "post",
+                        data: JSON.stringify({
+                          uid: this.adminUid,
+                          wid: this.workGroupWid,
+                          aid: this.agentUid,
+                          type: this.type,
+                          mobile: this.leaveMessageForm.mobile,
+                          email: this.leaveMessageForm.email,
+                          content: this.leaveMessageForm.content,
+                          client: this.client
+                        }),
+                        success:function(response){
+                          console.log("leave message: ", response);
+                          if (response.status_code === 200) {
+                            alert("留言成功");
+                            if (response.status_code === 200) {
                                 this.$message({ message: '留言成功', type: 'success'});
                             } else {
-                                this.$message.error(response.data.message);
+                                this.$message.error(response.message);
                             }
-                        }).catch(error => {
-                            console.log(error);
-                            this.$message.error('留言失败');
-                        });
-                    } else {
-                        console.log('error submit!!');
-                        return false;
-                    }
-                });
+                          } else {
+                            alert(response.message);
+                          }
+                        },
+                        error: function(error) {
+                          console.log(error);
+                          alert("留言失败");
+                        }
+                      });
+                }
+                // this.$refs['leaveMessageForm'].validate((valid) => {
+                //     if (valid) {
+                        // axios.post(this.HTTP_HOST + "/api/leavemsg/save?access_token=" + bytedeskapp.passport.token.access_token, {
+                        //     uid: this.adminUid,
+                        //     mobile: this.leaveMessageForm.mobile,
+                        //     email: this.leaveMessageForm.email,
+                        //     content: this.leaveMessageForm.content,
+                        //     client: 'web'
+                        // }).then(response => {
+                        //     console.log("leave message: ", response.data);
+                        //     if (response.data.status_code === 200) {
+                        //         this.$message({ message: '留言成功', type: 'success'});
+                        //     } else {
+                        //         this.$message.error(response.data.message);
+                        //     }
+                        // }).catch(error => {
+                        //     console.log(error);
+                        //     this.$message.error('留言失败');
+                        // });
+                    // } else {
+                    //     console.log('error submit!!');
+                    //     return false;
+                    // }
+                // });
+                
             },
             /**
              * 选择问卷答案
              */
             chooseQuestionnaire(itemQid) {
                 console.log(itemQid);
-                axios.get(this.HTTP_HOST + '/api/thread/questionnaire?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'tId': this.thread.tid,
-                        'itemQid': itemQid,
-                        'client': 'web'
+                // 留学: 意向国家 qid = '201810061551181'
+                // 移民：意向国家 qid = '201810061551183'
+                // 语培：意向类别 qid = '201810061551182'
+                // 其他：意向类别 qid = '201810061551184'
+                // 院校：意向院校 qid = '201810061551185'
+
+                if (itemQid === '201810061551181') {
+                    this.isLiuXue = true
+                } else {
+                    this.isLiuXue = false
+                }
+                //
+                var workGroups = []
+                for (var i = 0; i < this.questionnaireItemItems.length; i++) {
+                    var item = this.questionnaireItemItems[i]
+                    if (item.qid === itemQid) {
+                        workGroups = item.workGroups
                     }
-                })
-                    .then(function (response) {
-                        console.log("choose questionnaire success:",response.data);
-                        if (response.data.status_code === 200 ||
-                            response.data.status_code === 201)  {
-                            //
-                            let message = response.data.data;
-                            // 添加消息
-                            bytedeskapp.messages.push(message);
-                            // 滚动到底部
-                            bytedeskapp.scrollToBottom()
-                        } else {
-                            this.$message.warning(response.data.message)
-                        }
-                    })
-                    .catch(function (error) {
-                        console.log("choose questionnaire error:",error);
-                    });
+                }
+                //
+                var message =  {
+                    mid: this.guid(),
+                    type: 'workGroup',
+                    content: '选择工作组',
+                    workGroups: workGroups,
+                    createdAt: this.currentTimestamp(),
+                    status: 'stored',
+                    user: {
+                        uid: this.uid,
+                        username: this.username,
+                        nickname: this.username,
+                        avatar: 'https://chainsnow.oss-cn-shenzhen.aliyuncs.com/avatars/chrome_default_avatar.png',
+                        visitor: false
+                    }
+                }
+                this.pushToMessageArray(message)
+
+                // axios.get(this.HTTP_HOST + '/api/thread/questionnaire?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'tId': this.thread.tid,
+                //         'itemQid': itemQid,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("choose questionnaire success:",response.data);
+                //     if (response.data.status_code === 200 ||
+                //         response.data.status_code === 201)  {
+                //         //
+                //         var message = response.data.data;
+                //         // 添加消息
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 滚动到底部
+                //         bytedeskapp.scrollToBottom()
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("choose questionnaire error:",error);
+                // });
+
+                // $.ajax({
+                //     url: this.HTTP_HOST +
+                //     "/api/thread/questionnaire?access_token=" +
+                //     this.passport.token.access_token,
+                //     contentType: "application/json; charset=utf-8",
+                //     type: "get",
+                //     data: {
+                //     tId: this.thread.tid,
+                //     itemQid: itemQid,
+                //     client: this.client
+                //     },
+                //     success:function(response){
+                //         console.log("choose questionnaire success:", response);
+                //         if (response.status_code === 200 ||
+                //             response.status_code === 201)  {
+                //             //
+                //             var message = response.data;
+                //             // 添加消息
+                //             bytedeskapp.pushToMessageArray(message);;
+                //             // 滚动到底部
+                //             bytedeskapp.scrollToBottom()
+                //         } else {
+                //             this.$message.warning(response.message)
+                //         }
+                //     },
+                //     error: function(error) {
+                //     console.log("choose questionnaire error:", error);
+                //     }
+                // });
             },
             /**
              * 选择要留学国家
              */
             chooseCountry(companyCid, countryCid) {
-                axios.get(this.HTTP_HOST + '/api/thread/country?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'tId': this.thread.tid,
-                        'companyCid': companyCid,
-                        'countryCid': countryCid,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("choose country success:",response.data);
-                        if (response.data.status_code === 200 ||
-                            response.data.status_code === 201)  {
+                // axios.get(this.HTTP_HOST + '/api/thread/country?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'tId': this.thread.tid,
+                //         'companyCid': companyCid,
+                //         'countryCid': countryCid,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("choose country success:",response.data);
+                //     if (response.data.status_code === 200 ||
+                //         response.data.status_code === 201)  {
+                //         //
+                //         var message = response.data.data;
+                //         // 添加消息
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 滚动到底部
+                //         bytedeskapp.scrollToBottom()
+                //     } else {
+                //         this.$message.warning(response.data.message)
+                //     }
+                // })
+                // .catch(function (error) {
+                //     console.log("choose country error:",error);
+                // });
+                $.ajax({
+                    url: this.HTTP_HOST +
+                    "/api/thread/country?access_token=" +
+                    this.passport.token.access_token,
+                    contentType: "application/json; charset=utf-8",
+                    type: "get",
+                    data: {
+                      tId: this.thread.tid,
+                      companyCid: companyCid,
+                      countryCid: countryCid,
+                      client: this.client
+                    },
+                    success:function(response){
+                        console.log("choose country success:", response);
+                        if (response.status_code === 200 ||
+                            response.status_code === 201)  {
                             //
-                            let message = response.data.data;
+                            var message = response.data;
                             // 添加消息
-                            bytedeskapp.messages.push(message);
+                            bytedeskapp.pushToMessageArray(message);
                             // 滚动到底部
                             bytedeskapp.scrollToBottom()
                         } else {
-                            this.$message.warning(response.data.message)
+                            this.$message.warning(response.message)
                         }
-                    })
-                    .catch(function (error) {
-                        console.log("choose country error:",error);
-                    });
+                    },
+                    error: function(error) {
+                      console.log("choose country error:", error);
+                    }
+                  });
             },
             /**
              * 选择工作组
              */
-            chooseWorkGroup(wId) {
-                axios.get(this.HTTP_HOST + '/api/thread/workGroup?access_token=' + this.passport.token.access_token, {
-                    params:{
-                        'tId': this.thread.tid,
-                        'wId': wId,
-                        'client': 'web'
-                    }
-                })
-                    .then(function (response) {
-                        console.log("choose workGroup success:",response.data);
-                        let message = response.data.data;
-                        if (response.data.status_code === 200) {
+            chooseWorkGroup(wId, workGroupNickname) {
+                console.log(wId, workGroupNickname);
+                // axios.get(this.HTTP_HOST + '/api/thread/workGroup?access_token=' + this.passport.token.access_token, {
+                //     params:{
+                //         'tId': this.thread.tid,
+                //         'wId': wId,
+                //         'client': 'web'
+                //     }
+                // })
+                // .then(function (response) {
+                //     console.log("choose workGroup success:",response.data);
+                //     var message = response.data.data;
+                //     if (response.data.status_code === 200) {
+                //         //
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //         // 3. 加载聊天记录
+                //         bytedeskapp.loadMoreMessages();
+                //         // 4. 头像、标题、描述
+                //         if (message.thread.agent) {
+                //             bytedeskapp.avatar = message.thread.agent.avatar;
+                //             bytedeskapp.title = message.thread.agent.nickname;
+                //             bytedeskapp.description = message.thread.agent.description;
+                //         }
+
+                //     } else if (response.data.status_code === 201) {
+                //         // 继续之前会话
+                //         var thread = response.data.data;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = thread;
+                //         // 2. 订阅会话消息
+                //         bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                //         // 3. 加载聊天记录
+                //         bytedeskapp.loadMoreMessages();
+                //         // 4. 头像、标题、描述
+                //         if (thread.agent) {
+                //             bytedeskapp.avatar = thread.agent.avatar;
+                //             bytedeskapp.title = thread.agent.nickname;
+                //             bytedeskapp.description = thread.agent.description;
+                //         }
+
+                //     } else if (response.data.status_code === 202) {
+                //         // 排队
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //     } else if (response.data.status_code === 203) {
+                //         // 当前非工作时间，请自助查询或留言
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //     } else if (response.data.status_code === 204) {
+                //         // 当前无客服在线，请自助查询或留言
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //     } else if (response.data.status_code === 205) {
+                //         // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+                //         bytedeskapp.pushToMessageArray(message);;
+                //         // 1. 保存thread
+                //         bytedeskapp.thread = message.thread;
+                //     } else if (response.data.status_code === -1) {
+                //         // access token invalid
+                //         bytedeskapp.login();
+                //     } else if (response.data.status_code === -2) {
+                //         // sid 或 wid 错误
+                //         this.$message.error('siteId或者工作组id错误');
+                //     }
+                //     //
+                //     bytedeskapp.scrollToBottom()
+                // })
+                // .catch(function (error) {
+                //     console.log("choose workGroup error:",error);
+                // });
+
+                if (this.isLiuXue) {
+                    console.log('is liuxue')
+                    //
+                    $.ajax({
+                        url: this.HTTP_HOST +
+                        "/api/thread/choose/workGroup/liuxue?access_token=" +
+                        this.passport.token.access_token,
+                        contentType: "application/json; charset=utf-8",
+                        type: "get",
+                        data: {
+                          wId: wId,
+                          nickname: workGroupNickname,
+                          client: this.client
+                        },
+                        success:function(response){
+                            console.log("choose workGroup Liuxue success:",response);
+                            var message = response.data;
+                            if (response.status_code === 200) {
+                                //
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                                // 2. 订阅会话消息
+                                bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                                // 3. 加载聊天记录
+                                bytedeskapp.loadMoreMessages();
+                                // 4. 头像、标题、描述
+                                if (message.thread.agent) {
+                                    bytedeskapp.avatar = message.thread.agent.avatar;
+                                    bytedeskapp.title = message.thread.agent.nickname;
+                                    bytedeskapp.description = message.thread.agent.description;
+                                }
+        
+                            } else if (response.status_code === 201) {
+                                // 继续之前会话
+                                var thread = response.data;
+                                // 1. 保存thread
+                                bytedeskapp.thread = thread;
+                                // 2. 订阅会话消息
+                                bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                                // 3. 加载聊天记录
+                                bytedeskapp.loadMoreMessages();
+                                // 4. 头像、标题、描述
+                                if (thread.agent) {
+                                    bytedeskapp.avatar = thread.agent.avatar;
+                                    bytedeskapp.title = thread.agent.nickname;
+                                    bytedeskapp.description = thread.agent.description;
+                                }
+        
+                            } else if (response.status_code === 202) {
+                                // 排队
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 203) {
+                                // 当前非工作时间，请自助查询或留言
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 204) {
+                                // 当前无客服在线，请自助查询或留言
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 205) {
+                                // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === -1) {
+                                // access token invalid
+                                bytedeskapp.login();
+                            } else if (response.status_code === -2) {
+                                // sid 或 wid 错误
+                                this.$message.error('siteId或者工作组id错误');
+                            }
                             //
-                            bytedeskapp.messages.push(message);
-                            // 1. 保存thread
-                            bytedeskapp.thread = message.thread;
-                            // 2. 订阅会话消息
-                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                            // 3. 加载聊天记录
-                            bytedeskapp.loadMoreMessages();
-                            // 4. 头像、标题、描述
-                            if (message.thread.agent) {
-                                bytedeskapp.avatar = message.thread.agent.avatar;
-                                bytedeskapp.title = message.thread.agent.nickname;
-                                bytedeskapp.description = message.thread.agent.description;
-                            }
-
-                        } else if (response.data.status_code === 201) {
-                            // 继续之前会话
-                            let thread = response.data.data;
-                            // 1. 保存thread
-                            bytedeskapp.thread = thread;
-                            // 2. 订阅会话消息
-                            bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
-                            // 3. 加载聊天记录
-                            bytedeskapp.loadMoreMessages();
-                            // 4. 头像、标题、描述
-                            if (thread.agent) {
-                                bytedeskapp.avatar = thread.agent.avatar;
-                                bytedeskapp.title = thread.agent.nickname;
-                                bytedeskapp.description = thread.agent.description;
-                            }
-
-                        } else if (response.data.status_code === 202) {
-                            // 排队
-                            bytedeskapp.messages.push(message);
-                            // 1. 保存thread
-                            bytedeskapp.thread = message.thread;
-                        } else if (response.data.status_code === 203) {
-                            // 当前非工作时间，请自助查询或留言
-                            bytedeskapp.messages.push(message);
-                            // 1. 保存thread
-                            bytedeskapp.thread = message.thread;
-                        } else if (response.data.status_code === 204) {
-                            // 当前无客服在线，请自助查询或留言
-                            bytedeskapp.messages.push(message);
-                            // 1. 保存thread
-                            bytedeskapp.thread = message.thread;
-                        } else if (response.data.status_code === 205) {
-                            // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
-                            bytedeskapp.messages.push(message);
-                            // 1. 保存thread
-                            bytedeskapp.thread = message.thread;
-                        } else if (response.data.status_code === -1) {
-                            // access token invalid
-                            bytedeskapp.login();
-                        } else if (response.data.status_code === -2) {
-                            // sid 或 wid 错误
-                            this.$message.error('siteId或者工作组id错误');
+                            bytedeskapp.scrollToBottom()
+                        },
+                        error: function(error) {
+                          console.log("choose workGroup error:", error);
                         }
-                        //
-                        bytedeskapp.scrollToBottom()
-                    })
-                    .catch(function (error) {
-                        console.log("choose workGroup error:",error);
                     });
+                } else {
+                    console.log('is not liuxue')
+                    //
+                    $.ajax({
+                        url: this.HTTP_HOST +
+                        "/api/thread/choose/workGroup?access_token=" +
+                        this.passport.token.access_token,
+                        contentType: "application/json; charset=utf-8",
+                        type: "get",
+                        data: {
+                          tId: this.thread.tid,
+                          wId: wId,
+                          client: this.client
+                        },
+                        success:function(response){
+                            console.log("choose workGroup success:",response);
+                            var message = response.data;
+                            if (response.status_code === 200) {
+                                //
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                                // 2. 订阅会话消息
+                                bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                                // 3. 加载聊天记录
+                                bytedeskapp.loadMoreMessages();
+                                // 4. 头像、标题、描述
+                                if (message.thread.agent) {
+                                    bytedeskapp.avatar = message.thread.agent.avatar;
+                                    bytedeskapp.title = message.thread.agent.nickname;
+                                    bytedeskapp.description = message.thread.agent.description;
+                                }
+        
+                            } else if (response.status_code === 201) {
+                                // 继续之前会话
+                                var thread = response.data;
+                                // 1. 保存thread
+                                bytedeskapp.thread = thread;
+                                // 2. 订阅会话消息
+                                bytedeskapp.subscribeTopic(bytedeskapp.threadTopic);
+                                // 3. 加载聊天记录
+                                bytedeskapp.loadMoreMessages();
+                                // 4. 头像、标题、描述
+                                if (thread.agent) {
+                                    bytedeskapp.avatar = thread.agent.avatar;
+                                    bytedeskapp.title = thread.agent.nickname;
+                                    bytedeskapp.description = thread.agent.description;
+                                }
+        
+                            } else if (response.status_code === 202) {
+                                // 排队
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 203) {
+                                // 当前非工作时间，请自助查询或留言
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 204) {
+                                // 当前无客服在线，请自助查询或留言
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === 205) {
+                                // 插入业务路由，相当于咨询前提问问卷（选择 或 填写表单）
+                                bytedeskapp.pushToMessageArray(message);;
+                                // 1. 保存thread
+                                bytedeskapp.thread = message.thread;
+                            } else if (response.status_code === -1) {
+                                // access token invalid
+                                bytedeskapp.login();
+                            } else if (response.status_code === -2) {
+                                // sid 或 wid 错误
+                                this.$message.error('siteId或者工作组id错误');
+                            }
+                            //
+                            bytedeskapp.scrollToBottom()
+                        },
+                        error: function(error) {
+                          console.log("choose workGroup error:", error);
+                        }
+                    });
+                }
             },
             /**
              *
              */
-            pushMessage(messageObject) {
-                let contains = bytedeskapp.messages.some(message  =>  {
-                    return message.id === messageObject.id
-                })
+            guid() {
+                function s4 () {
+                    return Math.floor((1 + Math.random()) * 0x10000)
+                        .toString(16)
+                        .substring(1)
+                }
+                return s4() + s4() + '-' + s4() + '-' + s4() + '-' + s4() + '-' + s4() + s4() + s4()
+            },
+            currentTimestamp () {
+                return moment().format('YYYY-MM-DD HH:mm:ss')
+            },
+            pushToMessageArray(message) {
+                if (message.status === 'sending') {
+                    this.messages.push(message);
+                    return
+                }
+                //
+                var contains = false
+                for (var i = this.messages.length - 1; i >= 0; i--) {
+                    const msg = this.messages[i];
+                    // 根据localId替换本地消息，也即更新本地消息状态
+                    if (msg.mid === message.mid) {
+                        this.messages.splice(i, 1)
+                        this.messages.push(message)
+                        contains = true
+                    }
+                }
                 if (!contains) {
-                    bytedeskapp.messages.push(messageObject);
+                    this.messages.push(message)
                 }
             },
             /**
@@ -1226,29 +1898,30 @@
                         // TODO: 检查是否已经有进行中会话，如果已经存在，则返回
 
                         // 当前不存在进行中会话
-                        bytedeskapp.$msgbox({
-                            title: '邀请会话',
-                            message: '客服邀请您参加会话',
-                            showCancelButton: true,
-                            confirmButtonText: '接受',
-                            cancelButtonText: '拒绝',
-                            beforeClose: (action, instance, done) => {
-                                console.log('beforeClose:', action)
-                                if (action === 'confirm') {
-                                    instance.confirmButtonLoading = true;
-                                    instance.confirmButtonText = '接入中...';
-                                    //
-                                    bytedeskapp.acceptInviteBrowse()
-                                } else {
-                                    bytedeskapp.rejectInviteBrowse()
-                                }
-                                //
-                                instance.confirmButtonLoading = false;
-                                done()
-                            }
-                        }).then(action => {
-                            console.log('then:', action)
-                        })
+                        // bytedeskapp.$msgbox({
+                        //     title: '邀请会话',
+                        //     message: '客服邀请您参加会话',
+                        //     showCancelButton: true,
+                        //     confirmButtonText: '接受',
+                        //     cancelButtonText: '拒绝',
+                        //     beforeClose: (action, instance, done) => {
+                        //         console.log('beforeClose:', action)
+                        //         if (action === 'confirm') {
+                        //             instance.confirmButtonLoading = true;
+                        //             instance.confirmButtonText = '接入中...';
+                        //             //
+                        //             bytedeskapp.acceptInviteBrowse()
+                        //         } else {
+                        //             bytedeskapp.rejectInviteBrowse()
+                        //         }
+                        //         //
+                        //         instance.confirmButtonLoading = false;
+                        //         done()
+                        //     }
+                        // }).then(action => {
+                        //     console.log('then:', action)
+                        // })
+
                     } else if (messageObject.type === 'notification_queue') {
                         // 排队
                     } else if (messageObject.type === 'notification_queue_accept') {
@@ -1263,7 +1936,7 @@
 
                     if (messageObject.type !== 'notification_preview') {
                         bytedeskapp.isRobot = false;
-                        bytedeskapp.pushMessage(messageObject);
+                        bytedeskapp.pushToMessageArray(messageObject);
                         bytedeskapp.scrollToBottom();
                     } else {
                         // TODO: 监听客服端输入状态
@@ -1328,7 +2001,6 @@
             },
             /**
              * https://docs.spring.io/spring/docs/current/spring-framework-reference/web.html#websocket-stomp-authentication
-             *
              * https://stomp.bytedesk.com
              */
             byteDeskConnect() {
@@ -1347,7 +2019,7 @@
                     bytedeskapp.isConnected = true;
                     // 获取 websocket 连接的 sessionId
                     // FIXME: Uncaught TypeError: Cannot read property '1' of null
-                    let sessionUrl = /\/([^\/]+)\/websocket/.exec(socket._transport.url)
+                    var sessionUrl = /\/([^\/]+)\/websocket/.exec(socket._transport.url)
                     if (sessionUrl != null) {
                         bytedeskapp.sessionId = /\/([^\/]+)\/websocket/.exec(socket._transport.url)[1];
                     }
@@ -1452,7 +2124,7 @@
             // console.log("adminUid：" + this.adminUid + " workGroupWid:" + this.workGroupWid + " subDomain:" + this.subDomain)
         },
         mounted() {
-            this.initAxios();
+            // this.initAxios();
             if (this.username !== null
                 && this.username !== undefined
                 && this.username !== '') {

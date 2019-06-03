@@ -78,11 +78,11 @@
 
   // 第三方库
   var vendorJs = [
-    '//cdn.bootcss.com/jquery/1.9.1/jquery.min.js',
-    '//cdnjs.cloudflare.com/ajax/libs/UAParser.js/0.7.18/ua-parser.min.js',
-    '//cdnjs.cloudflare.com/ajax/libs/fingerprintjs2/1.8.0/fingerprint2.min.js',
-    '//cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js',
-    '//cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.0.0/sockjs.min.js',
+    '//cdn.bytedesk.com/js/vendor/jquery/1.9.1/jquery.min.js',
+    '//cdn.bytedesk.com/js/vendor/uaparser/0.7.18/ua-parser.min.js',
+    '//cdn.bytedesk.com/js/vendor/fingerprintjs2/1.8.0/fingerprint2.min.js',
+    '//cdn.bytedesk.com/js/vendor/moment/2.22.1/moment.min.js',
+    '//cdn.bytedesk.com/js/vendor/sockjs/1.1.4/sockjs.min.js',
     '//cdn.bytedesk.com/js/vendor/stomp/1.2/stomp.min.js',
     // 自定义的js
     '/kefu/js/embed/common/bd_kfe_data.js',

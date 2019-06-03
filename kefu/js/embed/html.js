@@ -109,12 +109,12 @@
             '<span id="byteDesk-input-pc-send-btn" style="color: black; cursor: pointer;">发送</span>' +
           '</div>' + // byteDesk-input-pc-send
           '<div id="byteDesk-logo">' + 
-            '<a href="http://xiaper.com" target="_blank">客服软件由虾婆(开源)提供</a>' +
+            '<a href="http://www.bytedesk.com" target="_blank">客服软件由萝卜丝提供</a>' +
           '</div>' + // byteDesk-logo
         '</div>' + // byteDesk-input-pc
       '</div>' + // byteDesk-main
       '<div id="byteDesk-rate">' +
-        '<span id="byteDesk-rate-close" style="cursor: pointer; color: gray;"><i class="iconfont icon-close"></i></span>' +
+        '<span id="byteDesk-rate-close" style="cursor: pointer; color: gray;"><i class="iconfont icon-close"></i>开发中...</span>' +
       '</div>' + // byteDesk-rate 评价
       '<div id="byteDesk-leave">' +
         '<span id="byteDesk-leave-close" style="cursor: pointer; color: gray;"><i class="iconfont icon-close"></i></span>' +

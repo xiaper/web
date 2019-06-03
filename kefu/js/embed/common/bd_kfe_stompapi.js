@@ -113,7 +113,7 @@ var bd_kfe_stompapi = {
         messageObject.type !== "notification_disconnect"
       ) {
         bd_kfe_data.isRobot = false;
-        bd_kfe_utils.pushMessage(messageObject);
+        bd_kfe_utils.pushToMessageArray(messageObject);
         bd_kfe_utils.scrollToBottom();
       } else {
         // TODO: 监听客服端输入状态

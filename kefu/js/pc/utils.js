@@ -255,25 +255,19 @@ var utils = {
           "</div>";
       } else if (utils.is_type_robot(message)) {
         console.log("robot:", message.content);
-        // var question = "";
-        // for (var i = 0; i < message.answers.length; i++) {
-        //   var answer = message.answers[i];
-        //   question += "<span style='color:#007bff; cursor: pointer;' onclick='httpapi.getAnswer(" + answer.aid + ")'>" + answer.question + "</span>";
-        // }
-        content += "<div class='text'>" + message.content + "</div>";
+        // TODO: 添加 ‘有帮助’ 和 ‘无帮助’
+        var question = "";
+        for (var j = 0; j < message.answers.length; j++) {
+          var answer = message.answers[j];
+          question += "<br/><span style='color:#007bff; cursor: pointer;' onclick='httpapi.getAnswer(" + answer.aid + ")'>" + answer.question + "</span>";
+        }
+        //
+        content += "<div class='text'>" + message.content  + question+ "</div>";
+        
       } else if (utils.is_type_questionnaire(message)) {
         var questionnaire = "";
-        for (
-          var i = 0;
-          i <
-          message.questionnaire.questionnaireItems[0].questionnaireItemItems
-            .length;
-          i++
-        ) {
-          var item =
-            message.questionnaire.questionnaireItems[0].questionnaireItemItems[
-              i
-            ];
+        for (var i = 0; i < message.questionnaire.questionnaireItems[0].questionnaireItemItems.length; i++) {
+          var item = message.questionnaire.questionnaireItems[0].questionnaireItemItems[i];
           questionnaire +=
             "<br/><span style='color: #007bff; cursor: pointer;' onclick='httpapi.chooseQuestionnaire(" +
             item.qid +
@@ -461,20 +455,7 @@ var utils = {
         .toString(16)
         .substring(1);
     }
-    return (
-      s4() +
-      s4() +
-      "-" +
-      s4() +
-      "-" +
-      s4() +
-      "-" +
-      s4() +
-      "-" +
-      s4() +
-      s4() +
-      s4()
-    );
+    return (s4() + s4() + "-" + s4() + "-" + s4() + "-" + s4() + "-" + s4() + s4() + s4());
   },
   //
   isMobile: function() { 
@@ -501,7 +482,7 @@ var utils = {
     var originalText = $("#inputcontent").val();
     $("#inputcontent").val(originalText + emotionText);
     $("#input-emoji-box").hide();
-    data.show_emoji = false
+    data.show_emoji = false;
   },
   processEmotion: function(body) {
     var emotionMap = {

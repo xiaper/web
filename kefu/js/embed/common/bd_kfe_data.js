@@ -3,10 +3,10 @@
  */
 var bd_kfe_data = {
   //
-  HTTP_HOST: "http://127.0.0.1:8000",
-  STOMP_HOST: "http://127.0.0.1:8000",
-  // HTTP_HOST: "https://api.bytedesk.com",
-  // STOMP_HOST: "https://stomp.bytedesk.com",
+  // HTTP_HOST: "http://127.0.0.1:8000",
+  // STOMP_HOST: "http://127.0.0.1:8000",
+  HTTP_HOST: "https://api.bytedesk.com",
+  STOMP_HOST: "https://stomp.bytedesk.com",
   URL_ROOT_PATH: "/kefu/",
   //
   imageDialogVisible: false,
@@ -105,6 +105,9 @@ var bd_kfe_data = {
   isRobot: false,
   isThreadStarted: false,
   isThreadClosed: false,
+  //
+  isLiuXue: false,
+  questionnaireItemItems: Object,
   //
   emotionBaseUrl: "https://chainsnow.oss-cn-shenzhen.aliyuncs.com/emojis/gif/",
   // 表情
