@@ -35,6 +35,22 @@ based on it.
 
 To check out docs, visit [xiaper.io](http://xiaper.io).
 
+## Structure
+
+```bash
+.
+├── LICENSE
+├── README.md
+├── assets # 资源文件
+├── docs  # 文档
+├── feedback # 意见反馈
+├── forum # 问答社区
+├── im # IM
+├── kefu # 在线客服
+├── support # 帮助中心、知识库
+└── ticket # 工单
+```
+
 ## Questions
 
 forum and chat to be released
