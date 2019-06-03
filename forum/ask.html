@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>提问 - 问答社区 - 萝卜丝 - 知识库</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <script src="assets/js/jquery.js"></script>
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script src="assets/js/uikit.js"></script>
+    <script src="assets/js/uikit-icons.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- 自定义内容 -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/httpapi.js"></script>
+    <script src="assets/js/forum.js"></script>
+
+    <!--layui-->
+    <link rel="stylesheet" href="/assets/js/layui/2.4.5/css/layui.css"/>
+    <script src="assets/js/ask.js"></script>
+    <script src="/assets/js/layui/2.4.5/layui.js"></script>
+
+</head>
+
+<body>
+
+    <div class="section-hero uk-background-blend-color-burn uk-background-top-center uk-background-cover uk-section-large1 cta" style="background-image: url(assets/img/city.jpg)" >
+        <nav class="uk-navbar-container uk-margin uk-navbar-transparent uk-light">
+            <div class="uk-container">
+                <div uk-navbar>
+                    <div class="uk-navbar-left">
+                        <a class="uk-navbar-item uk-logo uk-text-uppercase" href="index.html"> 萝卜丝·云客服</a>
+                    </div>
+                    <div class="uk-navbar-right">
+                        <ul class="uk-navbar-nav uk-text-uppercase uk-visible@m uk-margin-medium-left">
+                            <li><a href="index.html">首页</a></li>
+                            <li><a href="faq.html">常见问题</a></li>
+                            <li><a href="contact.html">联系我们</a></li>
+                        </ul>
+                        <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" uk-navbar-toggle-icon uk-toggle></a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <div class="uk-container hero">
+            <h1 class="uk-heading-primary uk-text-center uk-margin-large-top uk-light">帮助中心</h1>
+            <!-- <p class="uk-text-lead uk-text-center uk-light">Lead volutpat nibh ligula gravida. Magna auctor eget venenatis phasellus luctus sodales pulvinar</p> -->
+            <div class="uk-flex uk-flex-center">
+                <form id="supportSearchForm" class="uk-margin-medium-top uk-margin-xlarge-bottom uk-search uk-search-default">
+                    <a href="javascript:void(0)" class="uk-search-icon-flip" uk-search-icon onclick="utils.searchContent()"></a>
+                    <input id="supportAdminUid" name="uid" type="text" style="display:none"/>
+                    <input id="supportSearch" class="uk-search-input uk-form-large" type="search"
+                        autocomplete="off" name="content" placeholder="请输入..."
+                        onkeyup="utils.onKeyUp(arguments[0] || window.event)">
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-section uk-padding-remove-top uk-padding-remove-bottom">
+        <div class="uk-container">
+            <hr>
+        </div>
+    </div>
+
+    <div class="uk-section">
+        <div class="uk-container">
+            <!-- <div class="uk-child-width-1-2@s text-dark" uk-grid>
+                <div class="reply">
+                    <h3 class="uk-margin-medium-bottom" style="margin-bottom: 10px!important;">发表提问</h3>
+                    <div class="uk-width-1-1">
+                        <input id="forumAskTitle" class="uk-input" type="text" placeholder="标题">
+                    </div>
+                    <div class="uk-width-1-1" style="margin-top: 10px;">
+                        <textarea id="forumAskContent" class="uk-textarea" rows="5" placeholder="提问内容，请遵守法律法规"></textarea>
+                    </div>
+                    <div class="uk-width-1-1" style="margin-top: 10px;">
+                        <button class="uk-button uk-button-primary uk-width-1-1 uk-width-auto@s" onclick="utils.ask()">提交</button>
+                    </div>
+                </div>
+            </div> -->
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">类别<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <select name="category" lay-verify="required" lay-filter="category" id="forumCategory">
+                                        <option value=""></option>
+                                        <!-- <option value="0">北京</option> -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">标题<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="title" lay-verify="required"  placeholder="请输入标题" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">问题描述<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <textarea name="content" placeholder="请输入内容" class="layui-textarea" lay-verify="required"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="mobile" required lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮箱</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formForum" id="forumSubmit">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="uk-section uk-padding-remove section-cta uk-background-blend-lighten uk-background-center-center uk-background-cover uk-text-center" style="background-image: url(assets/img/cafe.jpg)" >
+        <div class="uk-background-muted1 uk-border-rounded1 uk-padding-large">
+            <h2>找不到您要的答案?</h2>
+            <!-- <p class="uk-text-lead">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor.</p> -->
+            <p class="uk-margin-medium-top">
+                <a href="contact.html" class="uk-button uk-button-primary uk-button-large">在线客服</a>
+            </p>
+        </div>
+    </div>
+
+    <footer id="footer" class="uk-section uk-margin-remove uk-section-xsmall uk-text-small uk-text-muted border-top">
+        <div class="uk-container">
+            <div class="uk-child-width-1-2@m uk-text-center" uk-grid>
+                <div class="uk-text-right@m">
+                    <!-- <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: facebook"></a>
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: google"></a>
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: vimeo"></a>
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: instagram"></a> -->
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a>
+                    <!-- <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: youtube"></a> -->
+                </div>
+                <div class="uk-flex-first@m uk-text-left@m">
+                    <p class="uk-text-small">北京微语天下科技有限公司, 京ICP备17041763号-2</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="offcanvas" uk-offcanvas="flip: true; overlay: true">
+        <div class="uk-offcanvas-bar">
+            <a class="uk-margin-small-bottom uk-logo uk-text-uppercase" href="index.html"> 萝卜丝·云客服</a>
+            <ul class="uk-nav uk-nav-default uk-text-uppercase">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="faq.html">常见问题</a></li>
+                <li><a href="contact.html">联系我们</a></li>
+                <!-- <li><a href="components.html">Components</a></li> -->
+            </ul>
+            <a href="contact.html" class="uk-button uk-button-small uk-button-default uk-width-1-1 uk-margin">在线客服</a>
+            <div class="uk-width-auto uk-text-center">
+                <!-- <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: facebook"></a> -->
+                <!-- <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: google"></a> -->
+                <!-- <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a> -->
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,136 @@
+
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>意见反馈 - 帮助中心 - 萝卜丝 - 知识库</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css" />
+    <script src="assets/js/uikit.js"></script>
+    <script src="assets/js/uikit-icons.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- 自定义内容 -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/httpapi.js"></script>
+    <script src="assets/js/feedback.js"></script>
+
+    <script src="assets/js/index.js"></script>
+
+    <!--layui-->
+    <link rel="stylesheet" href="/assets/js/layui/2.4.5/css/layui.css"/>
+    <script src="/assets/js/layui/2.4.5/layui.js"></script>
+
+</head>
+
+<body>
+
+    <nav class="uk-navbar-container uk-margin uk-navbar-transparent uk-background-primary uk-light uk-margin-remove-bottom">
+        <div class="uk-container">
+            <div uk-navbar>
+                <div class="uk-navbar-left">
+                    <a class="uk-navbar-item uk-logo uk-text-uppercase" href="index.html"> 萝卜丝·云客服</a>
+                </div>
+                <div class="uk-navbar-right">
+                    <ul class="uk-navbar-nav uk-text-uppercase uk-visible@m uk-margin-medium-left">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="faq.html">常见问题</a></li>
+                        <li><a href="contact.html">联系我们</a></li>
+                    </ul>
+                    <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" uk-navbar-toggle-icon uk-toggle></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="uk-section">
+        <div class="uk-container">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-8">
+                        <form class="layui-form" action="">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">类别<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <select name="category" lay-verify="required" lay-filter="category" id="feedbackCategory">
+                                        <option value=""></option>
+                                        <!-- <option value="0">北京</option> -->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="layui-form-item layui-form-text">
+                                <label class="layui-form-label">问题描述<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <textarea name="content" placeholder="请输入内容" class="layui-textarea" lay-verify="required"></textarea>
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">手机号<span class="layui-badge-dot"></span></label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="mobile" required lay-verify="required|phone" placeholder="请输入手机号" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">邮箱</label>
+                                <div class="layui-input-block">
+                                    <input type="text" name="email" required  lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+                                </div>
+                            </div>
+                            <!-- <div class="layui-form-item">
+                                <label class="layui-form-label">附件</label>
+                                <div class="layui-input-block">
+                                    <button type="button" class="layui-btn" id="feedbackFileUrl">
+                                        <i class="layui-icon">&#xe67c;</i>上传文件
+                                    </button>
+                                </div>
+                            </div> -->
+                            <div class="layui-form-item">
+                                <div class="layui-input-block">
+                                <button class="layui-btn" lay-submit lay-filter="formFeedback" id="feedbackSubmit">立即提交</button>
+                                <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="col-md-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer" class="uk-section uk-margin-large-top uk-section-xsmall uk-text-small uk-text-muted border-top">
+        <div class="uk-container">
+            <div class="uk-child-width-1-2@m uk-text-center" uk-grid>
+                <div class="uk-text-right@m">
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a>
+                </div>
+                <div class="uk-flex-first@m uk-text-left@m">
+                    <p class="uk-text-small">北京微语天下科技有限公司, 京ICP备17041763号-2</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="offcanvas" uk-offcanvas="flip: true; overlay: true">
+        <div class="uk-offcanvas-bar">
+            <a class="uk-margin-small-bottom uk-logo uk-text-uppercase" href="index.html"> Knowledge</a>
+            <ul class="uk-nav uk-nav-default uk-text-uppercase">
+                <li><a href="index.html">首页</a></li>
+                <li><a href="faq.html">常见问题</a></li>
+                <li><a href="contact.html">联系我们</a></li>
+            </ul>
+            <a href="contact.html" class="uk-button uk-button-small uk-button-default uk-width-1-1 uk-margin">Support</a>
+            <div class="uk-width-auto uk-text-center">
+                <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

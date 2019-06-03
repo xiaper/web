@@ -1,0 +1,141 @@
+
+<!DOCTYPE html>
+<html lang="en-gb" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>文章分类 - 帮助中心 - 萝卜丝 - 知识库</title>
+    <link rel="icon" href="assets/img/favicon.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css" />
+
+    <script src="assets/js/uikit.js"></script>
+    <script src="assets/js/uikit-icons.js"></script>
+    <script src="assets/js/jquery.js"></script>
+    <script src="assets/js/main.js"></script>
+
+    <!-- 自定义内容 -->
+    <script src="assets/js/utils.js"></script>
+    <script src="assets/js/data.js"></script>
+    <script src="assets/js/httpapi.js"></script>
+    <script src="assets/js/forum.js"></script>
+
+    <script src="assets/js/category.js"></script>
+
+</head>
+
+<body>
+
+    <nav class="uk-navbar-container uk-margin uk-navbar-transparent uk-background-primary uk-light uk-margin-remove-bottom">
+        <div class="uk-container">
+            <div uk-navbar>
+                <div class="uk-navbar-left">
+                    <a class="uk-navbar-item uk-logo uk-text-uppercase" href="index.html"> 萝卜丝·云客服</a>
+                </div>
+                <div class="uk-navbar-right">
+                    <ul class="uk-navbar-nav uk-text-uppercase uk-visible@m uk-margin-medium-left">
+                        <li><a href="index.html">首页</a></li>
+                        <li><a href="faq.html">常见问题</a></li>
+                        <li><a href="contact.html">联系我们</a></li>
+                    </ul>
+                    <a class="uk-navbar-toggle uk-hidden@m" href="#offcanvas" uk-navbar-toggle-icon uk-toggle></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="uk-section section-sub-nav uk-padding-remove">
+        <div class="uk-container">
+            <div uk-grid>
+                <div class="uk-width-2-3@m">
+                    <ul class="uk-breadcrumb uk-visible@m">
+                        <li><a href="index.html">首页</a></li>
+                        <li><span href="" id="supportCategoryName">类别</span></li>
+                    </ul>
+                </div>
+                <div class="uk-width-1-3@m">
+                    <div class="uk-margin">
+                        <form class="uk-search uk-search-default">
+                            <a href="javascript:void(0)" class="uk-search-icon-flip" uk-search-icon onclick="utils.searchContent()"></a>
+                            <input id="supportAdminUid" name="uid" type="text" style="display:none"/>
+                            <input id="supportSearch" class="uk-search-input" type="search" 
+                                autocomplete="off" placeholder="搜索" onkeyup="utils.onKeyUp(arguments[0] || window.event)">
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="border-top"></div>
+        </div>
+    </div>
+
+    <div class="uk-section uk-section-small uk-padding-remove-bottom section-content">
+        <div class="uk-container">
+            <div class="uk-grid-medium" uk-grid>
+
+                <!-- 右侧详情 -->
+                <div class="uk-width-3-4@m uk-flex-last@m">
+                    <h1 id="supportCategoryName2">类别</h1>
+                    <!-- <p class="uk-text-lead uk-margin-medium-bottom">Managing your account, creating new users, security and exporting data</p> -->
+                    <ul id="supportCategoryArticle" class="uk-list list-category link-icon-right">
+                        <!-- <li>
+                            <h3><a href="article.html">Manage payment settings and invoices</span></a></h3>
+                        </li> -->
+                    </ul>
+                    <!-- 翻页 -->
+                    <ul class="uk-pagination uk-margin-medium-top" uk-margin>
+                        <li><a href="#"><span class="uk-margin-small-right" uk-pagination-previous></span> 上一篇</a></li>
+                        <li class="uk-margin-auto-left"><a href="#">下一篇 <span class="uk-margin-small-left" uk-pagination-next></span></a></li>
+                    </ul>
+                </div>
+
+                <!-- 左侧列表 -->
+                <div class="uk-width-1-4@m text-dark sidebar">
+                    <h3>类别</h3>
+                    <ul id="supportCategory" class="uk-list uk-list-large uk-margin-medium-bottom">
+                        <!-- <li><a href="#">Getting Started</a></li> -->
+                        <!-- <li><a class="uk-text-bold" href="#">Account Management</a> <span uk-icon="icon: chevron-right"></span></li> -->
+                    </ul>
+                    <h3>相关文章</h3>
+                    <ul class="uk-list uk-list-large">
+                        <li>暂无</li>
+                        <!-- <li><a href="article.html">Setting up attributes</a></li> -->
+                        <!-- <li><a href="article.html">Shipping Options Page</a></li> -->
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <footer id="footer" class="uk-section uk-margin-large-top uk-section-xsmall uk-text-small uk-text-muted border-top">
+        <div class="uk-container">
+            <div class="uk-child-width-1-2@m uk-text-center" uk-grid>
+                <div class="uk-text-right@m">
+                    <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a>
+                </div>
+                <div class="uk-flex-first@m uk-text-left@m">
+                    <p class="uk-text-small">北京微语天下科技有限公司, 京ICP备17041763号-2</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <div id="offcanvas" uk-offcanvas="flip: true; overlay: true">
+        <div class="uk-offcanvas-bar">
+            <a class="uk-margin-small-bottom uk-logo uk-text-uppercase" href="index.html"> Knowledge</a>
+            <ul class="uk-nav uk-nav-default uk-text-uppercase">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="faq.html">Faq</a></li>
+                <li><a href="contact.html">Contact</a></li>
+            </ul>
+            <a href="contact.html" class="uk-button uk-button-small uk-button-default uk-width-1-1 uk-margin">Support</a>
+            <div class="uk-width-auto uk-text-center">
+                <a href="#" class="uk-icon-link uk-margin-small-right" uk-icon="icon: twitter"></a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
